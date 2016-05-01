@@ -33,7 +33,7 @@ function n.new(props, label, graph)
 
   -- {{{ add and delete functions
 
-  function node.addLink(n2, label, direction, props, g)
+  function node.addLink(n2, label, direction, props)
     local l = link.new(node, n2, label, direction, props, g)
 
     if links[l] ~= true then
@@ -63,6 +63,11 @@ function n.new(props, label, graph)
       properties[name] = value
     end
     return properties[name]
+  end
+  node.__index = function(t,v) return t.value(v) end
+  node.__newindex = function(t,k,v)
+    properties[k] = v
+    return v
   end
 
   -- }}}
@@ -113,6 +118,7 @@ function n.new(props, label, graph)
 
   -- }}}
 
+  setmetatable(node, node)
   if g then g:emit("NEWNODE", node) end
   return node
 end

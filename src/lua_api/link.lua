@@ -5,8 +5,9 @@ local set  = require "internal.set"
 
 local l = {}
 
-function l.new(n1, n2, label, props, graph)
+function l.new(n1, n2, label, direction, props, graph)
   local link = obj.new()
+  local direction  = direction or "-"
   local properties = props or {}
   local id   = tostring(link)
   local n1   = n1
@@ -33,6 +34,12 @@ function l.new(n1, n2, label, props, graph)
     end
     return properties[name]
   end
+  link.__index = function(t,v) return t.value(v) end
+  link.__newindex = function(t,k,v)
+    properties[k] = v
+    return v
+  end
+
 
   -- does property exist
   function link.has(property, value)
@@ -52,6 +59,7 @@ function l.new(n1, n2, label, props, graph)
     if idx == 2 then return n2 end
   end
 
+  setmetatable(link, link)
   if g then g:emit("NEWLINK", link) end
   return link
 end
