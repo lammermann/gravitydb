@@ -24,7 +24,14 @@ benchmark
 
 ## How to run tests
 
-TODO
+You can run the Unit tests from this directory by executing the command
+
+```bash
+  /path/to/busted
+```
+
+As a dependency you need to install the
+[busted](http://olivinelabs.com/busted/) lua test framework.
 
 ### Continuos integration
 
