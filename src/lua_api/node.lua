@@ -36,7 +36,7 @@ function n.new(props, label, graph)
   function node.addLink(n2, label, direction, props)
     local l = link.new(node, n2, label, direction, props, g)
 
-    if links[l] ~= true then
+    if l and links[l] ~= true then
       links[l] = true
       n2._addLink(l)
     end
@@ -116,6 +116,12 @@ function n.new(props, label, graph)
 
   -- }}}
 
+  -- }}}
+
+  -- helper metamethods {{{
+  function node.__tostring()
+    return "node["..tostring(id).."]"
+  end
   -- }}}
 
   setmetatable(node, node)

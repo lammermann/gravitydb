@@ -6,19 +6,44 @@ local set  = require "internal.set"
 local l = {}
 
 function l.new(n1, n2, label, direction, props, graph)
-  local link = obj.new()
+  -- check input parameters
   local direction  = direction or "-"
+  if direction ~= "-" and direction ~= "<" and direction ~= ">" then return end
   local properties = props or {}
-  local id   = tostring(link)
+  if type(properties) ~= "table" then return end
+  if not n1 or not n2 then return end
   local n1   = n1
   local n2   = n2
+  if type(label) ~= "string" then return end
   local label = label
   local g = graph
+
+  local link = obj.new()
+  local id   = tostring(link)
+
+  -- read out parameters {{{
 
   -- get the link id
   function link.id()
     return id
   end
+
+  -- get the link direction
+  function link.direction()
+    return direction
+  end
+
+  -- get the link label
+  function link.label()
+    return label
+  end
+
+  function link.n(idx)
+    if idx == 1 then return n1 end
+    if idx == 2 then return n2 end
+  end
+
+  -- }}}
 
   -- delete the link with all pointers to it
   function link.delete()
@@ -54,10 +79,24 @@ function l.new(n1, n2, label, direction, props, graph)
     return false
   end
 
-  function link.n(idx)
-    if idx == 1 then return n1 end
-    if idx == 2 then return n2 end
+  -- helper metamethods {{{
+  function link.__tostring()
+    local out = {"link[",tostring(id),"][",tostring(n1.id())}
+    if direction == "<" or direction == "-" then
+      table.insert(out,"<-")
+    else
+      table.insert(out,"-")
+    end
+    table.insert(out,label)
+    if direction == ">" or direction == "-" then
+      table.insert(out,"->")
+    else
+      table.insert(out,"-")
+    end
+    table.insert(out,tostring(n2.id()),"]")
+    return table.concat(out)
   end
+  -- }}}
 
   setmetatable(link, link)
   if g then g:emit("NEWLINK", link) end
