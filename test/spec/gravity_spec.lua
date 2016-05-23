@@ -27,7 +27,7 @@ describe("The gravity graph database", function()
     end)
   end) -- }}}
 
-  describe("query language frontents", function() -- {{{
+  describe("query language frontends", function() -- {{{
 
     -- prepare the moses graph {{{
     setup(function()

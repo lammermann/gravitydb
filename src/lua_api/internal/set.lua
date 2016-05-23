@@ -85,7 +85,7 @@ function s.new(nodes, links)
 
   -- }}}
 
-  -- {{{ aggregate or modifction functions
+  -- {{{ aggregate or modifcation functions
 
   -- get the ids of all objects in a set.
   function set.id()

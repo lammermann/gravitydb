@@ -11,6 +11,8 @@ graph._VERSION = graph.version
 function graph.new()
   local g = set.new()
 
+  -- {{{ CRUD operations
+
   function g.createNode(props, label)
     return node.new(props, label, g)
   end
@@ -19,6 +21,8 @@ function graph.new()
     -- TODO delete all links to other nodes
     g:emit("DELNODE", node)
   end
+
+  -- }}}
 
   -- {{{ filter functions
 
@@ -29,6 +33,17 @@ function graph.new()
   end
 
   function g.relations(filter)
+  end
+
+  -- }}}
+
+  -- {{{ import export functions
+
+  function g.import(data, format)
+  end
+
+  function g.export(format)
+    return
   end
 
   -- }}}
