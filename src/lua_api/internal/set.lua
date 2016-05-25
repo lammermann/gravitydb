@@ -29,8 +29,26 @@ function s.new(nodes, links)
   end
 
   function set.nodes(filter)
+    local subnodes = {}
+    if filter then
+      if type(filter) == "function" then
+        for k,v in pairs(nodes) do
+          if filter(v) then
+            subnodes[k] = v
+          end
+        end
+      else
+        return
+      end
+    else
+      for k,v in pairs(nodes) do
+        subnodes[k] = v
+      end
+    end
+    return s.new(subnodes)
   end
   set.vertices = set.nodes
+  set.V        = set.nodes
 
   function set.links(filter)
   end
@@ -95,12 +113,12 @@ function s.new(nodes, links)
   function set.value(name, value)
     if not name then return end
     local result = {}
-    for _,n in ipairs(nodes) do
+    for _,n in pairs(nodes) do
       if n.has(name) then
         table.insert(result, n.value(name, value))
       end
     end
-    for l,_ in pairs(links) do
+    for _,l in pairs(links) do
       if l.has(name) then
         table.insert(result, l.value(name, value))
       end

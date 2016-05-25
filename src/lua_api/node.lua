@@ -22,13 +22,18 @@ local n = {}
 function n.new(props, label, graph)
   local node = obj.new()
   local properties = props or {}
-  local id   = tostring(node)
+  local id    = tostring(node)
+  local label = label
   local links = {}
   local g = graph
 
   -- get the node id
   function node.id()
     return id
+  end
+
+  function node.label()
+    return label
   end
 
   -- {{{ add and delete functions

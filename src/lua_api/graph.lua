@@ -25,15 +25,11 @@ function graph.new()
   -- }}}
 
   -- {{{ filter functions
+  -- most filter functions are allready in set
 
   function g.findByID(id)
   end
 
-  function g.nodes(filter)
-  end
-
-  function g.relations(filter)
-  end
 
   -- }}}
 
