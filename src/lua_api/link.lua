@@ -49,7 +49,11 @@ function l.new(n1, n2, label, direction, props, graph)
   function link.delete()
     n1._deleteLink(link)
     n2._deleteLink(link)
-    g:emit("DELLINK", link)
+    if g then
+      g:emit("DELLINK", link)
+    else
+      link:emit("DELTHIS", link)
+    end
   end
 
   -- get or set a property

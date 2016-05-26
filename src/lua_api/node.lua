@@ -38,6 +38,18 @@ function n.new(props, label, graph)
 
   -- {{{ add and delete functions
 
+  -- delete the node with all its links and pointers to it
+  function node.delete()
+    for l,_ in pairs(links) do
+      l.delete()
+    end
+    if g then
+      g:emit("DELNODE", node)
+    else
+      node:emit("DELNODE", node)
+    end
+  end
+
   function node.addLink(n2, label, direction, props)
     local l = link.new(node, n2, label, direction, props, g)
 

@@ -139,6 +139,12 @@ function s.new(nodes, links)
 
   -- delete all objects in a set
   function set.delete()
+    for _,n in pairs(nodes) do
+      n.delete()
+    end
+    for l,_ in pairs(links) do
+      l.delete()
+    end
   end
 
   -- connect all nodes to a given node
