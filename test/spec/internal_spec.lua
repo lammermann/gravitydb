@@ -79,7 +79,9 @@ describe("gravity database core", function()
       end) -- }}}
 
       it("get deleted if one of there connected nodes gets deleted", function() -- {{{
-        pending("TODO")
+        assert.are.same(1, n2.outL("test_link").count())
+        n.delete()
+        assert.are.same(0, n2.outL("test_link").count())
       end) -- }}}
 
       it("must have a label", function() -- {{{
