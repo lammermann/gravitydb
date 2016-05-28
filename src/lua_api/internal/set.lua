@@ -51,10 +51,28 @@ function s.new(nodes, links)
   set.V        = set.nodes
 
   function set.links(filter)
+    local sublinks = {}
+    if filter then
+      if type(filter) == "function" then
+        for k,v in pairs(links) do
+          if filter(v) then
+            sublinks[k] = v
+          end
+        end
+      else
+        return
+      end
+    else
+      for k,v in pairs(links) do
+        sublinks[k] = v
+      end
+    end
+    return s.new(sublinks)
   end
   set.connections = set.links
   set.relations   = set.links
   set.edges       = set.links
+  set.E           = set.links
 
   -- get all incoming nodes matching the filter condition from all nodes and
   -- links
