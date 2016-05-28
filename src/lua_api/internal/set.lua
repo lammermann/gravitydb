@@ -132,6 +132,10 @@ function s.new(nodes, links)
 
   -- count all objects which can be filtered optionally
   function set.count(filter)
+    count = 0
+    for _ in pairs(links) do count = count + 1 end
+    for _ in pairs(nodes) do count = count + 1 end
+    return count
   end
 
   function set.deleteProperty(name)
