@@ -106,8 +106,8 @@ function n.new(props, label, graph)
 
   -- {{{ filter relations
 
-  -- return outgoing nodes
-  function node.out(filter)
+  -- return all conected nodes
+  function node.both(filter)
     local nds = {}
     for l,_ in pairs(links) do
       if l.n(1) == node then
@@ -119,16 +119,56 @@ function n.new(props, label, graph)
     return set.new(nds)
   end
 
+  -- return all conected relations
+  function node.bothL(filter)
+  end
+
+  -- return outgoing nodes
+  function node.out(filter)
+    local nds = {}
+    for l,_ in pairs(links) do
+      if l.n(1) == node then
+        table.insert(nds, l.n(2))
+      elseif l.direction() == '-' then
+        table.insert(nds, l.n(1))
+      end
+    end
+    return set.new(nds)
+  end
+
   -- return outgoing relations
   function node.outL(filter)
+    local lks = {}
+    for l,_ in pairs(links) do
+      if l.n(1) == node or l.direction() == '-' then
+        table.insert(lks, l)
+      end
+    end
+    return set.new(lks)
   end
 
   -- return incoming nodes
   function node.in_(filter)
+    local nds = {}
+    for l,_ in pairs(links) do
+      if l.n(2) == node then
+        table.insert(nds, l.n(1))
+      elseif l.direction() == '-' then
+        table.insert(nds, l.n(2))
+      end
+    end
+    return set.new(nds)
   end
 
   -- return incoming relations
   function node.inL(filter)
+    local lks = {}
+    for l,_ in pairs(links) do
+      if l.n(2) == node or l.direction() == '-' then
+        table.insert(lks, l)
+      end
+    end
+    return set.new(lks)
   end
 
   -- }}}
