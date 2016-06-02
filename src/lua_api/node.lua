@@ -91,6 +91,19 @@ function n.new(props, label, graph)
 
   -- {{{ filter functions
 
+  -- {{{ helper functions
+
+  local function get_filter_func(filter)
+    if type(filter) == "string" then
+      return function(obj) return obj.label() == filter end
+    elseif type(filter) == "function" then
+      return filter
+    end
+    return function() return true end
+  end
+
+  -- }}}
+
   -- does property exist
   function node.has(property, value)
     local p = properties[property]
@@ -108,12 +121,15 @@ function n.new(props, label, graph)
 
   -- return all conected nodes
   function node.both(filter)
+    local ff  = get_filter_func(filter)
     local nds = {}
     for l,_ in pairs(links) do
-      if l.n(1) == node then
-        table.insert(nds, l.n(2))
-      else
-        table.insert(nds, l.n(1))
+      if ff(l) then
+        if l.n(1) == node then
+          table.insert(nds, l.n(2))
+        else
+          table.insert(nds, l.n(1))
+        end
       end
     end
     return set.new(nds)
@@ -125,12 +141,15 @@ function n.new(props, label, graph)
 
   -- return outgoing nodes
   function node.out(filter)
+    local ff  = get_filter_func(filter)
     local nds = {}
     for l,_ in pairs(links) do
-      if l.n(1) == node then
-        table.insert(nds, l.n(2))
-      elseif l.direction() == '-' then
-        table.insert(nds, l.n(1))
+      if ff(l) then
+        if l.n(1) == node then
+          table.insert(nds, l.n(2))
+        elseif l.direction() == '-' then
+          table.insert(nds, l.n(1))
+        end
       end
     end
     return set.new(nds)
@@ -149,12 +168,15 @@ function n.new(props, label, graph)
 
   -- return incoming nodes
   function node.in_(filter)
+    local ff  = get_filter_func(filter)
     local nds = {}
     for l,_ in pairs(links) do
-      if l.n(2) == node then
-        table.insert(nds, l.n(1))
-      elseif l.direction() == '-' then
-        table.insert(nds, l.n(2))
+      if ff(l) then
+        if l.n(2) == node then
+          table.insert(nds, l.n(1))
+        elseif l.direction() == '-' then
+          table.insert(nds, l.n(2))
+        end
       end
     end
     return set.new(nds)
