@@ -78,6 +78,15 @@ describe("gravity database core", function()
         assert.is.same("-", l2.direction())
       end) -- }}}
 
+      it("between two connected nodes must have a opposite direction for both of them", function() -- {{{
+        n.addLink(n2, "->", ">")
+        n.addLink(n2, "<-", "<")
+        assert.is.same(n2.id(), n.out("->").id())
+        assert.is.same(n.id(), n2.in_("->").id())
+        assert.is.same(n.id(), n2.out("<-").id())
+        assert.is.same(n2.id(), n.in_("<-").id())
+      end) -- }}}
+
       it("get deleted if one of there connected nodes gets deleted", function() -- {{{
         assert.are.same(1, n2.outL("test_link").count())
         n.delete()

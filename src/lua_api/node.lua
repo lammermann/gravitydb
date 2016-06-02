@@ -51,7 +51,12 @@ function n.new(props, label, graph)
   end
 
   function node.addLink(n2, label, direction, props)
-    local l = link.new(node, n2, label, direction, props, g)
+    local l
+    if direction == "<" then
+      l = link.new(n2, node, label, ">", props, g)
+    else
+      l = link.new(node, n2, label, direction, props, g)
+    end
 
     if l and links[l] ~= true then
       links[l] = true
