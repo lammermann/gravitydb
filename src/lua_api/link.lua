@@ -12,8 +12,8 @@ function l.new(n1, n2, label, direction, props, graph)
   local properties = props or {}
   if type(properties) ~= "table" then return end
   if not n1 or not n2 then return end
-  local n1   = n1
-  local n2   = n2
+  local n1 = n1
+  local n2 = n2
   if type(label) ~= "string" then return end
   local label = label
   local g = graph
@@ -86,17 +86,13 @@ function l.new(n1, n2, label, direction, props, graph)
   -- helper metamethods {{{
   function link.__tostring()
     local out = {"link[",tostring(id),"][",tostring(n1.id())}
-    if direction == "<" or direction == "-" then
+    if direction == "-" then
       table.insert(out,"<-")
     else
       table.insert(out,"-")
     end
     table.insert(out,label)
-    if direction == ">" or direction == "-" then
-      table.insert(out,"->")
-    else
-      table.insert(out,"-")
-    end
+    table.insert(out,"->")
     table.insert(out,tostring(n2.id()),"]")
     return table.concat(out)
   end

@@ -125,6 +125,16 @@ function s.new(nodes, links)
 
   -- get the ids of all objects in a set.
   function set.id()
+    local result = {}
+    for _,n in pairs(nodes) do
+      table.insert(result, n.id())
+    end
+    for _,l in pairs(links) do
+      table.insert(result, l.id())
+    end
+    if #result == 0 then return end
+    if #result == 1 then return result[1] end
+    return result
   end
 
   -- get or set all values of a property in all objects in a set
