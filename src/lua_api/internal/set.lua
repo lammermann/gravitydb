@@ -112,11 +112,21 @@ function s.new(nodes, links)
   -- get all incoming links matiching the filter condition from all nodes
   -- in the set
   function set.inL(filter)
+    local res = s.new()
+    for _,n in pairs(nodes) do
+      res = res + n.inL(filter)
+    end
+    return res
   end
 
   -- get all outgoing links matiching the filter condition from all nodes
   -- in the set
   function set.outL(filter)
+    local res = s.new()
+    for _,n in pairs(nodes) do
+      res = res + n.outL(filter)
+    end
+    return res
   end
 
   function set.has(property, value)
