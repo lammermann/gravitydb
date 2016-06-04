@@ -8,7 +8,7 @@ local l = {}
 function l.new(n1, n2, label, direction, props, graph)
   -- check input parameters
   local direction  = direction or "-"
-  if direction ~= "-" and direction ~= "<" and direction ~= ">" then return end
+  if direction ~= "-" and direction ~= ">" then return end
   local properties = props or {}
   if type(properties) ~= "table" then return end
   if not n1 or not n2 then return end

@@ -67,7 +67,7 @@ function s.new(nodes, links)
         sublinks[k] = v
       end
     end
-    return s.new(sublinks)
+    return s.new(nil, sublinks)
   end
   set.connections = set.links
   set.relations   = set.links
@@ -76,12 +76,12 @@ function s.new(nodes, links)
 
   -- get all incoming nodes matching the filter condition from all nodes and
   -- links
-  function set.inN(filter)
+  function set.in_(filter)
   end
 
   -- get all outgoing nodes matching the filter condition from all nodes and
   -- links
-  function set.outN(filter)
+  function set.out(filter)
   end
 
   -- get all incoming links matiching the filter condition from all nodes
