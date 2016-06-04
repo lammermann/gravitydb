@@ -174,7 +174,7 @@ function s.new(nodes, links)
     for _,n in pairs(nodes) do
       n.delete()
     end
-    for l,_ in pairs(links) do
+    for _,l in pairs(links) do
       l.delete()
     end
   end

@@ -93,7 +93,8 @@ function l.new(n1, n2, label, direction, props, graph)
     end
     table.insert(out,label)
     table.insert(out,"->")
-    table.insert(out,tostring(n2.id()),"]")
+    table.insert(out,tostring(n2.id()))
+    table.insert(out,"]")
     return table.concat(out)
   end
   -- }}}
