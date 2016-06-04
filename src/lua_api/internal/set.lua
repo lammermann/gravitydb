@@ -277,6 +277,15 @@ function s.new(nodes, links)
   -- {{{ math set operations
 
   function set.union(s2)
+    local nds = s2.nodes().map(function(n) return n end)
+    local lks = s2.links().map(function(n) return n end)
+    for id,n in pairs(nodes) do
+      nds[id] = n
+    end
+    for id,l in pairs(links) do
+      lks[id] = l
+    end
+    return s.new(nds, lks)
   end
 
   function set.intersect(s2)
@@ -339,6 +348,9 @@ function s.new(nodes, links)
 
   -- }}}
 
+  local mt = {}
+  mt.__add = function(s, s2) return s.union(s2) end
+  setmetatable(set, mt)
   return set
 end
 
