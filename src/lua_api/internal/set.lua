@@ -130,6 +130,23 @@ function s.new(nodes, links)
 
   -- {{{ aggregate or modifcation functions
 
+  -- {{{ helper functions
+
+  local function sortfunc(t)
+    return function(sorter)
+      if sorter == false then
+        table.sort(t, function(a,b) return a>b end)
+      elseif type(sorter) == "function" then
+        table.sort(t, sorter)
+      else
+        table.sort(t)
+      end
+      return t
+    end
+  end
+
+  -- }}}
+
   -- get the ids of all objects in a set.
   function set.id()
     local result = {}
@@ -141,6 +158,8 @@ function s.new(nodes, links)
     end
     if #result == 0 then return end
     if #result == 1 then return result[1] end
+    local mt = { sort = sortfunc(result) }
+    setmetatable(result, { __index = mt })
     return result
   end
 
@@ -160,6 +179,8 @@ function s.new(nodes, links)
     end
     if #result == 0 then return end
     if #result == 1 then return result[1] end
+    local mt = { sort = sortfunc(result) }
+    setmetatable(result, { __index = mt })
     return result
   end
   set.__index = function(t,v) return t.value(v) end
