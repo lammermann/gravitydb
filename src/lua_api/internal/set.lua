@@ -18,6 +18,19 @@ function s.new(nodes, links)
 
   -- {{{ filter functions
 
+  -- {{{ helper functions
+
+  local function get_filter_func(filter)
+    if type(filter) == "string" then
+      return function(obj) return obj.label() == filter end
+    elseif type(filter) == "function" then
+      return filter
+    end
+    return function() return true end
+  end
+
+  -- }}}
+
   function set.findByID(id)
   end
 
@@ -31,14 +44,11 @@ function s.new(nodes, links)
   function set.nodes(filter)
     local subnodes = {}
     if filter then
-      if type(filter) == "function" then
-        for k,v in pairs(nodes) do
-          if filter(v) then
-            subnodes[k] = v
-          end
+      local ff  = get_filter_func(filter)
+      for k,v in pairs(nodes) do
+        if ff(v) then
+          subnodes[k] = v
         end
-      else
-        return
       end
     else
       for k,v in pairs(nodes) do
@@ -53,14 +63,11 @@ function s.new(nodes, links)
   function set.links(filter)
     local sublinks = {}
     if filter then
-      if type(filter) == "function" then
-        for k,v in pairs(links) do
-          if filter(v) then
-            sublinks[k] = v
-          end
+      local ff  = get_filter_func(filter)
+      for k,v in pairs(links) do
+        if ff(v) then
+          sublinks[k] = v
         end
-      else
-        return
       end
     else
       for k,v in pairs(links) do
