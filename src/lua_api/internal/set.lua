@@ -207,6 +207,24 @@ function s.new(nodes, links)
     end
   end
 
+  -- functional programming map function
+  function set.map(mfunc)
+    local result = {}
+    local i = 0
+    for _,n in pairs(nodes) do
+      table.insert(result, mfunc(n, i))
+      i = i + 1
+    end
+    i = 0
+    for _,l in pairs(links) do
+      table.insert(result, mfunc(l, i))
+      i = i + 1
+    end
+    local mt = { sort = sortfunc(result) }
+    setmetatable(result, { __index = mt })
+    return result
+  end
+
   -- connect all nodes to a given node
   function set.link(node, label, direction, props)
   end
