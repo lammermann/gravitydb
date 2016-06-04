@@ -84,11 +84,29 @@ function s.new(nodes, links)
   -- get all incoming nodes matching the filter condition from all nodes and
   -- links
   function set.in_(filter)
+    local ff  = get_filter_func(filter)
+    local nds = {}
+    for _,l in pairs(links) do
+      local n = l.n(1)
+      if ff(n) then
+        nds[n.id()] = n
+      end
+    end
+    return s.new(nds)
   end
 
   -- get all outgoing nodes matching the filter condition from all nodes and
   -- links
   function set.out(filter)
+    local ff  = get_filter_func(filter)
+    local nds = {}
+    for _,l in pairs(links) do
+      local n = l.n(2)
+      if ff(n) then
+        nds[n.id()] = n
+      end
+    end
+    return s.new(nds)
   end
 
   -- get all incoming links matiching the filter condition from all nodes
