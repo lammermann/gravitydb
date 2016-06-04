@@ -162,13 +162,16 @@ function n.new(props, label, graph)
 
   -- return outgoing relations
   function node.outL(filter)
+    local ff  = get_filter_func(filter)
     local lks = {}
     for l,_ in pairs(links) do
-      if l.n(1) == node or l.direction() == '-' then
-        table.insert(lks, l)
+      if ff(l) then
+        if l.n(1) == node or l.direction() == '-' then
+          table.insert(lks, l)
+        end
       end
     end
-    return set.new(lks)
+    return set.new(nil, lks)
   end
 
   -- return incoming nodes
@@ -189,13 +192,16 @@ function n.new(props, label, graph)
 
   -- return incoming relations
   function node.inL(filter)
+    local ff  = get_filter_func(filter)
     local lks = {}
     for l,_ in pairs(links) do
-      if l.n(2) == node or l.direction() == '-' then
-        table.insert(lks, l)
+      if ff(l) then
+        if l.n(2) == node or l.direction() == '-' then
+          lks[l.id()] = l
+        end
       end
     end
-    return set.new(lks)
+    return set.new(nil, lks)
   end
 
   -- }}}
