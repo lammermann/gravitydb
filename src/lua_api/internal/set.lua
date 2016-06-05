@@ -250,6 +250,9 @@ function s.new(nodes, links, parent)
 
   -- connect all nodes to a given node
   function set.link(node, label, direction, props)
+    for _,n in pairs(nodes) do
+      n.addLink(node, label, direction, props)
+    end
   end
 
   -- sort all objects in a set
