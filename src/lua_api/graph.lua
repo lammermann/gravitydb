@@ -24,15 +24,6 @@ function graph.new()
 
   -- }}}
 
-  -- {{{ filter functions
-  -- most filter functions are allready in set
-
-  function g.findByID(id)
-  end
-
-
-  -- }}}
-
   -- {{{ import export functions
 
   function g.import(data, format)

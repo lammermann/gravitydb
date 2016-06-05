@@ -127,7 +127,7 @@ function n.new(props, label, graph)
         end
       end
     end
-    return set.new(nds)
+    return g.subset(nds)
   end
 
   -- return all conected relations
@@ -147,7 +147,7 @@ function n.new(props, label, graph)
         end
       end
     end
-    return set.new(nds)
+    return g.subset(nds)
   end
 
   -- return outgoing relations
@@ -161,7 +161,7 @@ function n.new(props, label, graph)
         end
       end
     end
-    return set.new(nil, lks)
+    return g.subset(nil, lks)
   end
 
   -- return incoming nodes
@@ -177,7 +177,7 @@ function n.new(props, label, graph)
         end
       end
     end
-    return set.new(nds)
+    return g.subset(nds)
   end
 
   -- return incoming relations
@@ -191,7 +191,7 @@ function n.new(props, label, graph)
         end
       end
     end
-    return set.new(nil, lks)
+    return g.subset(nil, lks)
   end
 
   -- }}}

@@ -14,10 +14,15 @@ local get_filter_func = h.get_filter_func
 
 local s = {}
 
-function s.new(nodes, links)
+function s.new(nodes, links, parent)
   local set = obj.new()
   local nodes = nodes or {}
   local links = links or {}
+  local g     = parent or set
+
+  function set.subset(nodes, links)
+    return s.new(nodes, links, g)
+  end
 
   -- {{{ filter functions
 
@@ -45,7 +50,7 @@ function s.new(nodes, links)
         subnodes[k] = v
       end
     end
-    return s.new(subnodes)
+    return set.subset(subnodes)
   end
   set.vertices = set.nodes
   set.V        = set.nodes
@@ -64,7 +69,7 @@ function s.new(nodes, links)
         sublinks[k] = v
       end
     end
-    return s.new(nil, sublinks)
+    return set.subset(nil, sublinks)
   end
   set.connections = set.links
   set.relations   = set.links
@@ -82,7 +87,7 @@ function s.new(nodes, links)
         nds[n.id()] = n
       end
     end
-    return s.new(nds)
+    return set.subset(nds)
   end
 
   -- get all outgoing nodes matching the filter condition from all nodes and
@@ -96,13 +101,13 @@ function s.new(nodes, links)
         nds[n.id()] = n
       end
     end
-    return s.new(nds)
+    return set.subset(nds)
   end
 
   -- get all incoming links matiching the filter condition from all nodes
   -- in the set
   function set.inL(filter)
-    local res = s.new()
+    local res = set.subset()
     for _,n in pairs(nodes) do
       res = res + n.inL(filter)
     end
@@ -112,7 +117,7 @@ function s.new(nodes, links)
   -- get all outgoing links matiching the filter condition from all nodes
   -- in the set
   function set.outL(filter)
-    local res = s.new()
+    local res = set.subset()
     for _,n in pairs(nodes) do
       res = res + n.outL(filter)
     end
@@ -270,7 +275,7 @@ function s.new(nodes, links)
   --
   -- execpt and retain are math set operations
   function set.aggregate(container)
-    container = s.new(nodes, links)
+    container = set.subset(nodes, links)
     return set
   end
 
@@ -303,7 +308,7 @@ function s.new(nodes, links)
     for id,l in pairs(links) do
       lks[id] = l
     end
-    return s.new(nds, lks)
+    return set.subset(nds, lks)
   end
 
   function set.intersect(s2)
