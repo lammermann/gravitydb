@@ -1,7 +1,10 @@
 -- {{{ includes
 local obj  = require "internal.object"
 local set  = require "internal.set"
-local link  = require "link"
+local link = require "link"
+local h    = require "internal.helpers"
+
+local get_filter_func = h.get_filter_func
 -- }}}
 
 local n = {}
@@ -95,19 +98,6 @@ function n.new(props, label, graph)
   -- }}}
 
   -- {{{ filter functions
-
-  -- {{{ helper functions
-
-  local function get_filter_func(filter)
-    if type(filter) == "string" then
-      return function(obj) return obj.label() == filter end
-    elseif type(filter) == "function" then
-      return filter
-    end
-    return function() return true end
-  end
-
-  -- }}}
 
   -- does property exist
   function node.has(property, value)
