@@ -104,7 +104,16 @@ function s.new(nodes, links, parent)
   function set.in_(filter)
     local ff  = get_filter_func(filter)
     local nds = {}
+    local lks = {}
+    for _,n in pairs(nodes) do
+      for _, l in pairs(n._links()) do
+        lks[l.id()] = l
+      end
+    end
     for _,l in pairs(links) do
+      lks[l.id()] = l
+    end
+    for _,l in pairs(lks) do
       local n = l.n(1)
       if ff(l) then
         nds[n.id()] = n
@@ -118,7 +127,16 @@ function s.new(nodes, links, parent)
   function set.out(filter)
     local ff  = get_filter_func(filter)
     local nds = {}
+    local lks = {}
+    for _,n in pairs(nodes) do
+      for _, l in pairs(n._links()) do
+        lks[l.id()] = l
+      end
+    end
     for _,l in pairs(links) do
+      lks[l.id()] = l
+    end
+    for _,l in pairs(lks) do
       local n = l.n(2)
       if ff(l) then
         nds[n.id()] = n

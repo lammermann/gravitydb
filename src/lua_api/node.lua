@@ -196,6 +196,16 @@ function n.new(props, label, graph)
 
   -- }}}
 
+  -- {{{ internal functions
+  function node._links()
+    local lks = {}
+    for l,_ in pairs(links) do
+      lks[l.id()] = l
+    end
+    return lks
+  end
+  -- }}}
+
   -- }}}
 
   -- helper metamethods {{{
