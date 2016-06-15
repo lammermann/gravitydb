@@ -34,6 +34,29 @@ function s.new(nodes, links, parent)
   -- `filter` is a function that gets the arguments `object` and `index`:
   --    filter(object, index)
   function set.filter(filter)
+    local subnodes = {}
+    local sublinks = {}
+    if filter then
+      local ff  = get_filter_func(filter)
+      for k,v in pairs(nodes) do
+        if ff(v) then
+          subnodes[k] = v
+        end
+      end
+      for k,v in pairs(links) do
+        if ff(v) then
+          sublinks[k] = v
+        end
+      end
+    else
+      for k,v in pairs(nodes) do
+        subnodes[k] = v
+      end
+      for k,v in pairs(links) do
+        sublinks[k] = v
+      end
+    end
+    return set.subset(subnodes, sublinks)
   end
 
   function set.nodes(filter)
