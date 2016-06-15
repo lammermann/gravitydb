@@ -27,7 +27,7 @@ describe("gravity database", function()
     -- }}}
 
     it("csv", function() -- {{{
-      local csv = require "util.csv"
+      local csv = require "import.csv"
       csv("data/moses_nodes.csv", function(data)
         g.createNode({name=data.name}, data.label)
       end)
