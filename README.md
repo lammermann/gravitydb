@@ -21,6 +21,10 @@ Nonetheless there is a standalone server in the [examples folder](/examples)
 
 First make sure you have installed the build dependencies.
 
+* [lua](https://www.lua.org/)
+* [lpeg](http://www.inf.puc-rio.br/~roberto/lpeg/) optional for usage of some
+  frontends and importers.
+
 Download the latest version of the code from
 [github](https://github.com/lammermann/gravitydb/archive/master.zip) or clone
 the git repository:

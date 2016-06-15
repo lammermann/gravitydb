@@ -1,0 +1,4 @@
+id1,label,direction,id2
+moses,sibling_of,-,aaron
+moses,sibling_of,-,miriam
+aaron,sibling_of,-,miriam
