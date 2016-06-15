@@ -47,6 +47,10 @@ describe("The gravity graph database", function()
 
       describe("queries:", function()
 
+        it("find vertex by name", function()
+          assert.is.equal(moses.id(), g.V().has("name", "moses").id())
+        end)
+
         it("Who are the siblings of aaron?", function()
           local siblings = aaron.out("sibling_of").value("name")
           assert.is.equal("table",type(siblings))
