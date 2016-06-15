@@ -209,6 +209,17 @@ function s.new(nodes, links, parent)
     return result
   end
 
+  -- get a node by his index
+  function set.node(idx)
+    local idx = idx or 1
+    local i = 1
+    for _,n in pairs(nodes) do
+      if i == idx then return n end
+      i = i + 1
+    end
+  end
+  set.n = set.node
+
   -- get or set all values of a property in all objects in a set
   function set.value(name, value)
     if not name then return end
