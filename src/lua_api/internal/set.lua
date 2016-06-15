@@ -106,7 +106,7 @@ function s.new(nodes, links, parent)
     local nds = {}
     for _,l in pairs(links) do
       local n = l.n(1)
-      if ff(n) then
+      if ff(l) then
         nds[n.id()] = n
       end
     end
@@ -120,7 +120,7 @@ function s.new(nodes, links, parent)
     local nds = {}
     for _,l in pairs(links) do
       local n = l.n(2)
-      if ff(n) then
+      if ff(l) then
         nds[n.id()] = n
       end
     end
