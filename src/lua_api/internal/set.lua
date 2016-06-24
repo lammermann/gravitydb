@@ -7,6 +7,7 @@
 
 -- {{{ includes
 local obj = require "internal.object"
+local pip = require "internal.pipes"
 local h   = require "internal.helpers"
 
 local get_filter_func = h.get_filter_func
@@ -194,82 +195,36 @@ function s.new(nodes, links, parent)
 
   -- {{{ aggregate or modifcation functions
 
-  -- {{{ helper functions
-
-  local function sortfunc(t)
-    return function(sorter)
-      if sorter == false then
-        table.sort(t, function(a,b) return a>b end)
-      elseif type(sorter) == "function" then
-        table.sort(t, sorter)
-      else
-        table.sort(t)
-      end
-      return t
-    end
-  end
-
-  -- }}}
-
   -- get the ids of all objects in a set.
   function set.id()
-    local result = {}
-    for _,n in pairs(nodes) do
-      table.insert(result, n.id())
-    end
-    for _,l in pairs(links) do
-      table.insert(result, l.id())
-    end
-    if #result == 0 then return end
-    if #result == 1 then return result[1] end
-    local mt = { sort = sortfunc(result) }
-    setmetatable(result, { __index = mt })
-    return result
+    set._insertstep{run=pip.id}
+    return set:_runsteps()
   end
 
   -- get a node by his index
   function set.node(idx)
-    local idx = idx or 1
-    local i = 1
-    for _,n in pairs(nodes) do
-      if i == idx then return n end
-      i = i + 1
-    end
+    set._insertstep{run=pip.node, args={idx=idx}}
+    return set:_runsteps()
   end
   set.n = set.node
 
   -- get or set all values of a property in all objects in a set
   function set.value(name, value)
-    if not name then return end
-    local result = {}
-    for _,n in pairs(nodes) do
-      if n.has(name) then
-        table.insert(result, n.value(name, value))
-      end
-    end
-    for _,l in pairs(links) do
-      if l.has(name) then
-        table.insert(result, l.value(name, value))
-      end
-    end
-    if #result == 0 then return end
-    if #result == 1 then return result[1] end
-    local mt = { sort = sortfunc(result) }
-    setmetatable(result, { __index = mt })
-    return result
+    set._insertstep{run=pip.value, args={k=name, v=value}}
+    return set:_runsteps()
   end
   set.__index = function(t,v) return t.value(v) end
   set.__newindex = function(t,k,v) return t.value(k,v) end
 
   -- count all objects which can be filtered optionally
   function set.count(filter)
-    count = 0
-    for _ in pairs(links) do count = count + 1 end
-    for _ in pairs(nodes) do count = count + 1 end
-    return count
+    set._insertstep{run=pip.count}
+    return set:_runsteps()
   end
 
   function set.deleteProperty(name)
+    set._insertstep{run=pip.deleteP, args={k=name}}
+    return set:_runsteps()
   end
 
   -- delete all objects in a set
@@ -284,20 +239,8 @@ function s.new(nodes, links, parent)
 
   -- functional programming map function
   function set.map(mfunc)
-    local result = {}
-    local i = 0
-    for _,n in pairs(nodes) do
-      table.insert(result, mfunc(n, i))
-      i = i + 1
-    end
-    i = 0
-    for _,l in pairs(links) do
-      table.insert(result, mfunc(l, i))
-      i = i + 1
-    end
-    local mt = { sort = sortfunc(result) }
-    setmetatable(result, { __index = mt })
-    return result
+    set._insertstep{run=pip.map, args={f=mfunc}}
+    return set:_runsteps()
   end
 
   -- connect all nodes to a given node
@@ -383,6 +326,14 @@ function s.new(nodes, links, parent)
   -- }}}
 
   -- {{{ internal functions
+
+  function set:_getinput()
+    local nds = {}
+    for _,n in pairs(nodes) do table.insert(nds,n) end
+    local lks = {}
+    for _,l in pairs(links) do table.insert(lks,l) end
+    return { n=nds, l=lks, c={} }
+  end
 
   set:addListener("NEWNODE", function(node, graph)
     local id = node.id()

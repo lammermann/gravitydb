@@ -16,6 +16,21 @@ end
 function o.new(listeners)
   local obj = {}
   local listeners = {}
+  local steps = {}
+
+  function obj._insertstep(st)
+    table.insert(steps, st)
+  end
+
+  function obj:_runsteps()
+    -- should I do pipe optimation before?
+    local input = self:_getinput()
+    for _,st in ipairs(steps) do
+      input = st.run(input, self, st.args)
+    end
+    steps = {}
+    return input
+  end
 
   -- TODO there needs to be some parameter checking and error handling
   -- this could be done more efficiently in c++

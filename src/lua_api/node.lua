@@ -204,6 +204,10 @@ function n.new(props, label, graph)
     end
     return lks
   end
+
+  function node:_getinput()
+    return { n={node}, l={}, c={} }
+  end
   -- }}}
 
   -- }}}

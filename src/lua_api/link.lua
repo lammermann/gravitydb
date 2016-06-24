@@ -83,6 +83,12 @@ function l.new(n1, n2, label, direction, props, graph)
     return false
   end
 
+  -- {{{ internal functions
+  function link:_getinput()
+    return { n={}, l={link}, c={} }
+  end
+  -- }}}
+
   -- helper metamethods {{{
   function link.__tostring()
     local out = {"link[",tostring(id),"][",tostring(n1.id())}
