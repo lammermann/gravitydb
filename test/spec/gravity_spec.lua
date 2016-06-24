@@ -33,9 +33,9 @@ describe("The gravity graph database", function()
     setup(function()
       g = gravity.new()
 
-      moses = g.createNode({name = "moses"}, "PERSON")
-      aaron = g.createNode({name = "aaron"}, "PERSON")
-      miriam = g.createNode({name = "miriam"}, "PERSON")
+      moses = g.createNode({name = "moses"}, "MALE")
+      aaron = g.createNode({name = "aaron"}, "MALE")
+      miriam = g.createNode({name = "miriam"}, "FEMALE")
 
       moses.addLink(aaron, "sibling_of", '-')
       moses.addLink(miriam, "sibling_of", '-')
@@ -49,6 +49,10 @@ describe("The gravity graph database", function()
 
         it("find vertex by name", function()
           assert.is.equal(moses.id(), g.V().has("name", "moses").id())
+        end)
+
+        it("filter by label", function()
+          assert.is.equal(miriam.id(), g.V("FEMALE").id())
         end)
 
         it("Who are the siblings of aaron?", function()
