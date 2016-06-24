@@ -8,9 +8,6 @@
 -- {{{ includes
 local obj = require "internal.object"
 local pip = require "internal.pipes"
-local h   = require "internal.helpers"
-
-local get_filter_func = h.get_filter_func
 -- }}}
 
 local s = {}
@@ -35,65 +32,20 @@ function s.new(nodes, links, parent)
   -- `filter` is a function that gets the arguments `object` and `index`:
   --    filter(object, index)
   function set.filter(filter)
-    local subnodes = {}
-    local sublinks = {}
-    if filter then
-      local ff  = get_filter_func(filter)
-      for k,v in pairs(nodes) do
-        if ff(v) then
-          subnodes[k] = v
-        end
-      end
-      for k,v in pairs(links) do
-        if ff(v) then
-          sublinks[k] = v
-        end
-      end
-    else
-      for k,v in pairs(nodes) do
-        subnodes[k] = v
-      end
-      for k,v in pairs(links) do
-        sublinks[k] = v
-      end
-    end
-    return set.subset(subnodes, sublinks)
+    set._insertstep{run=pip.filter, args={f=filter}}
+    return set
   end
 
   function set.nodes(filter)
-    local subnodes = {}
-    if filter then
-      local ff  = get_filter_func(filter)
-      for k,v in pairs(nodes) do
-        if ff(v) then
-          subnodes[k] = v
-        end
-      end
-    else
-      for k,v in pairs(nodes) do
-        subnodes[k] = v
-      end
-    end
-    return set.subset(subnodes)
+    set._insertstep{run=pip.nodes, args={f=filter}}
+    return set
   end
   set.vertices = set.nodes
   set.V        = set.nodes
 
   function set.links(filter)
-    local sublinks = {}
-    if filter then
-      local ff  = get_filter_func(filter)
-      for k,v in pairs(links) do
-        if ff(v) then
-          sublinks[k] = v
-        end
-      end
-    else
-      for k,v in pairs(links) do
-        sublinks[k] = v
-      end
-    end
-    return set.subset(nil, sublinks)
+    set._insertstep{run=pip.links, args={f=filter}}
+    return set
   end
   set.connections = set.links
   set.relations   = set.links
@@ -103,67 +55,29 @@ function s.new(nodes, links, parent)
   -- get all incoming nodes matching the filter condition from all nodes and
   -- links
   function set.in_(filter)
-    local ff  = get_filter_func(filter)
-    local nds = {}
-    local lks = {}
-    for _,n in pairs(nodes) do
-      for _, l in pairs(n._links()) do
-        lks[l.id()] = l
-      end
-    end
-    for _,l in pairs(links) do
-      lks[l.id()] = l
-    end
-    for _,l in pairs(lks) do
-      local n = l.n(1)
-      if ff(l) then
-        nds[n.id()] = n
-      end
-    end
-    return set.subset(nds)
+    set._insertstep{run=pip.in_, args={f=filter}}
+    return set
   end
 
   -- get all outgoing nodes matching the filter condition from all nodes and
   -- links
   function set.out(filter)
-    local ff  = get_filter_func(filter)
-    local nds = {}
-    local lks = {}
-    for _,n in pairs(nodes) do
-      for _, l in pairs(n._links()) do
-        lks[l.id()] = l
-      end
-    end
-    for _,l in pairs(links) do
-      lks[l.id()] = l
-    end
-    for _,l in pairs(lks) do
-      local n = l.n(2)
-      if ff(l) then
-        nds[n.id()] = n
-      end
-    end
-    return set.subset(nds)
+    set._insertstep{run=pip.out, args={f=filter}}
+    return set
   end
 
   -- get all incoming links matiching the filter condition from all nodes
   -- in the set
   function set.inL(filter)
-    local res = set.subset()
-    for _,n in pairs(nodes) do
-      res = res + n.inL(filter)
-    end
-    return res
+    set._insertstep{run=pip.inL, args={f=filter}}
+    return set
   end
 
   -- get all outgoing links matiching the filter condition from all nodes
   -- in the set
   function set.outL(filter)
-    local res = set.subset()
-    for _,n in pairs(nodes) do
-      res = res + n.outL(filter)
-    end
-    return res
+    set._insertstep{run=pip.outL, args={f=filter}}
+    return set
   end
 
   function set.has(property, value)
@@ -245,9 +159,8 @@ function s.new(nodes, links, parent)
 
   -- connect all nodes to a given node
   function set.link(node, label, direction, props)
-    for _,n in pairs(nodes) do
-      n.addLink(node, label, direction, props)
-    end
+    set._insertstep{run=pip.link, args={ n=node, l=label, d=direction, p=props }}
+    return set:_runsteps()
   end
 
   -- sort all objects in a set
