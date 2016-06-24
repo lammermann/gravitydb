@@ -24,12 +24,13 @@ function o.new(listeners)
 
   function obj:_runsteps()
     -- should I do pipe optimation before?
-    local input = self:_getinput()
-    for _,st in ipairs(steps) do
-      input = st.run(input, self, st.args)
+    local inout = self:_getinput()
+    if #steps > 0 then
+      local st = steps[1]
+      inout = st.run(inout, st.args, 1, steps, self)
     end
     steps = {}
-    return input
+    return inout
   end
 
   -- TODO there needs to be some parameter checking and error handling
