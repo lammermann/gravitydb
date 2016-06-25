@@ -79,7 +79,8 @@ describe("gravity database core", function()
         assert.is_nil(l2)
         -- no argument is implicit for both directions
         l2  = n.addLink(n2, "implicit")
-        assert.is.same("-", l2.direction())
+        assert.is.same(1, n.outL("implicit").count())
+        assert.is.same(1, n.inL("implicit").count())
       end) -- }}}
 
       it("between two connected nodes must have a opposite direction for both of them", function() -- {{{

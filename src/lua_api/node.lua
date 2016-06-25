@@ -54,11 +54,18 @@ function n.new(props, label, graph)
   end
 
   function node.addLink(n2, label, direction, props)
+    local direction = direction or "-"
     local l
     if direction == "<" then
-      l = link.new(n2, node, label, ">", props, g)
+      l = link.new(n2, node, label, props, g)
+    elseif direction == ">" then
+      l = link.new(node, n2, label, props, g)
+    elseif direction == "-" then
+      l = link.new(node, n2, label, props, g)
+      -- add automatically a second link the othe direction
+      node.addLink(n2, label, "<", props)
     else
-      l = link.new(node, n2, label, direction, props, g)
+      return
     end
 
     if l and links[l] ~= true then
@@ -138,8 +145,6 @@ function n.new(props, label, graph)
       if ff(l) then
         if l.n(1) == node then
           table.insert(nds, l.n(2))
-        elseif l.direction() == '-' then
-          table.insert(nds, l.n(1))
         end
       end
     end
@@ -152,7 +157,7 @@ function n.new(props, label, graph)
     local lks = {}
     for l,_ in pairs(links) do
       if ff(l) then
-        if l.n(1) == node or l.direction() == '-' then
+        if l.n(1) == node then
           table.insert(lks, l)
         end
       end
@@ -168,8 +173,6 @@ function n.new(props, label, graph)
       if ff(l) then
         if l.n(2) == node then
           table.insert(nds, l.n(1))
-        elseif l.direction() == '-' then
-          table.insert(nds, l.n(2))
         end
       end
     end
@@ -182,7 +185,7 @@ function n.new(props, label, graph)
     local lks = {}
     for l,_ in pairs(links) do
       if ff(l) then
-        if l.n(2) == node or l.direction() == '-' then
+        if l.n(2) == node then
           lks[l.id()] = l
         end
       end

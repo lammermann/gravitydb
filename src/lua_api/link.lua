@@ -5,10 +5,8 @@ local set  = require "internal.set"
 
 local l = {}
 
-function l.new(n1, n2, label, direction, props, graph)
+function l.new(n1, n2, label, props, graph)
   -- check input parameters
-  local direction  = direction or "-"
-  if direction ~= "-" and direction ~= ">" then return end
   local properties = props or {}
   if type(properties) ~= "table" then return end
   if not n1 or not n2 then return end
@@ -26,11 +24,6 @@ function l.new(n1, n2, label, direction, props, graph)
   -- get the link id
   function link.id()
     return id
-  end
-
-  -- get the link direction
-  function link.direction()
-    return direction
   end
 
   -- get the link label
@@ -91,16 +84,10 @@ function l.new(n1, n2, label, direction, props, graph)
 
   -- helper metamethods {{{
   function link.__tostring()
-    local out = {"link[",tostring(id),"][",tostring(n1.id())}
-    if direction == "-" then
-      table.insert(out,"<-")
-    else
-      table.insert(out,"-")
-    end
-    table.insert(out,label)
-    table.insert(out,"->")
-    table.insert(out,tostring(n2.id()))
-    table.insert(out,"]")
+    local out = {
+      "link[",tostring(id),"][",tostring(n1.id()),
+      "-",label,"->",tostring(n2.id()),"]"
+    }
     return table.concat(out)
   end
   -- }}}
