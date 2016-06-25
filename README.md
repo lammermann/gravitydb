@@ -39,13 +39,17 @@ Getting started
 ---------------
 TODO
 
-For further information please go to the [doc folder](/doc).
+You can get used to the concepts of graph data handling by following the
+[tutorial](/doc/tutorial.md) or by examining the exemplary use case
+[recepies](/doc/recepies).
+
+For further information please read the [user guide](/doc/userguide.md).
 
 Hacking the code
 ----------------
 You can help improving the project in different ways:
 
-* blog about it or link it
+* blog about it or link to it
 * add to the documentation
 * test and file issues
 * submit patches
