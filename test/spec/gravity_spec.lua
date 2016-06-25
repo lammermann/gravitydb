@@ -47,7 +47,23 @@ describe("The gravity graph database", function()
     end)
     -- }}}
 
+    context("filter steps:", function() -- {{{
+
+      it("filter", function() -- {{{
+        assert.are.same(miriam.id(), g.filter("FEMALE").id())
+      end) -- }}}
+
+    end) -- }}}
+
     context("aggregate steps:", function() -- {{{
+
+      it("id", function() -- {{{
+        assert.are.same(moses.id(), g.V().has("name", "moses").id())
+      end) -- }}}
+
+      it("count", function() -- {{{
+        assert.are.same(2, g.V("MALE").count())
+      end) -- }}}
 
       it("value", function() -- {{{
         assert.are.same("miriam", g.V("FEMALE").value("name"))
@@ -56,6 +72,14 @@ describe("The gravity graph database", function()
         -- can be used to set values
         g.V("MALE").value("test","x")
         assert.are.same({"aaron", "moses"}, g.V().has("test","x").value("name").sort())
+      end) -- }}}
+
+      it("map", function() -- {{{
+        assert.are.same({"aaron 5", "miriam 6", "moses 5"},
+          g.V().map(function(el)
+            return el.value("name") .. " " .. tostring(#el.value("name"))
+          end).sort()
+        )
       end) -- }}}
 
       it("deleteProperty", function() -- {{{
