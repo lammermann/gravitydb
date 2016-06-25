@@ -33,8 +33,8 @@ describe("The gravity graph database", function()
     before_each(function()
       g = gravity.new()
 
-      moses = g.createNode({name = "moses"}, "MALE")
-      aaron = g.createNode({name = "aaron"}, "MALE")
+      moses = g.createNode({name = "moses", priest = false}, "MALE")
+      aaron = g.createNode({name = "aaron", priest = true}, "MALE")
       miriam = g.createNode({name = "miriam", a = 1}, "FEMALE")
       amram = g.createNode({name = "amram"}, "MALE")
       jochebed = g.createNode({name = "jochebed"}, "FEMALE")
@@ -42,8 +42,8 @@ describe("The gravity graph database", function()
       moses.addLink(aaron,  "sibling_of", '>', { b = 1 })
       moses.addLink(miriam, "sibling_of", '>', { b = 2 })
       miriam.addLink(aaron, "sibling_of", '>', { b = 3 })
-      moses.addLink(aaron,  "sibling_of", '<')
-      moses.addLink(miriam, "sibling_of", '<')
+      moses.addLink(aaron,  "sibling_of", '<', { c = false })
+      moses.addLink(miriam, "sibling_of", '<', { c = true })
       miriam.addLink(aaron, "sibling_of", '<')
       amram.addLink(moses,  "parent_of",  '>')
       amram.addLink(aaron,  "parent_of",  '>')
@@ -84,6 +84,14 @@ describe("The gravity graph database", function()
         )
         assert.are.same(1,
           g.E("sibling_of").has("b", 3).count()
+        )
+        -- can be of different types
+        assert.are.same(1,
+          g.V().has("name", "moses").has("priest").count()
+        )
+        -- for links also
+        assert.are.same(2,
+          g.E("sibling_of").has("c").count()
         )
       end) -- }}}
 

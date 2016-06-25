@@ -63,8 +63,8 @@ function l.new(n1, n2, label, props, graph)
   -- does property exist
   function link.has(property, value)
     local p = properties[property]
-    if p then
-      if value then
+    if p ~= nil then
+      if value ~= nil then
         if p == value then return true end
         return false
       end
