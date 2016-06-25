@@ -35,11 +35,22 @@ describe("The gravity graph database", function()
 
       moses = g.createNode({name = "moses"}, "MALE")
       aaron = g.createNode({name = "aaron"}, "MALE")
-      miriam = g.createNode({name = "miriam"}, "FEMALE")
+      miriam = g.createNode({name = "miriam", a = 1}, "FEMALE")
+      amram = g.createNode({name = "amram"}, "MALE")
+      jochebed = g.createNode({name = "jochebed"}, "FEMALE")
 
-      moses.addLink(aaron, "sibling_of", '-')
-      moses.addLink(miriam, "sibling_of", '-')
-      miriam.addLink(aaron, "sibling_of", '-')
+      moses.addLink(aaron,  "sibling_of", '>')
+      moses.addLink(miriam, "sibling_of", '>')
+      miriam.addLink(aaron, "sibling_of", '>')
+      moses.addLink(aaron,  "sibling_of", '<')
+      moses.addLink(miriam, "sibling_of", '<')
+      miriam.addLink(aaron, "sibling_of", '<')
+      amram.addLink(moses,  "parent_of",  '>')
+      amram.addLink(aaron,  "parent_of",  '>')
+      amram.addLink(miriam, "parent_of",  '>')
+      jochebed.addLink(moses,  "parent_of",  '>')
+      jochebed.addLink(aaron,  "parent_of",  '>')
+      jochebed.addLink(miriam, "parent_of",  '>')
     end)
 
     after_each(function()
@@ -50,7 +61,31 @@ describe("The gravity graph database", function()
     context("filter steps:", function() -- {{{
 
       it("filter", function() -- {{{
-        assert.are.same(miriam.id(), g.filter("FEMALE").id())
+        assert.are.same({"jochebed", "miriam"},
+          g.filter("FEMALE").value("name").sort()
+        )
+      end) -- }}}
+
+      it("in", function() -- {{{
+        assert.are.same({"amram", "amram", "jochebed", "jochebed"},
+          g.V().has("name", "moses")
+            .in_("sibling_of")
+            .in_("parent_of")
+            .value("name").sort()
+        )
+      end) -- }}}
+
+      it("out", function() -- {{{
+        assert.are.same({"aaron", "moses"}, g.V().has("name", "miriam")
+          .out("sibling_of")
+          .value("name").sort()
+        )
+        assert.are.same({"aaron", "miriam", "moses", "moses"},
+          g.V().has("name", "moses")
+            .out("sibling_of")
+            .out("sibling_of")
+            .value("name").sort()
+        )
       end) -- }}}
 
     end) -- }}}
@@ -62,20 +97,20 @@ describe("The gravity graph database", function()
       end) -- }}}
 
       it("count", function() -- {{{
-        assert.are.same(2, g.V("MALE").count())
+        assert.are.same(3, g.V("MALE").count())
       end) -- }}}
 
       it("value", function() -- {{{
-        assert.are.same("miriam", g.V("FEMALE").value("name"))
+        assert.are.same("miriam", g.V().has("name","miriam").value("name"))
         -- is sortable
-        assert.are.same({"aaron", "moses"}, g.V("MALE").value("name").sort())
+        assert.are.same({"aaron", "amram", "moses"}, g.V("MALE").value("name").sort())
         -- can be used to set values
         g.V("MALE").value("test","x")
-        assert.are.same({"aaron", "moses"}, g.V().has("test","x").value("name").sort())
+        assert.are.same({"aaron", "amram", "moses"}, g.V().has("test","x").value("name").sort())
       end) -- }}}
 
       it("map", function() -- {{{
-        assert.are.same({"aaron 5", "miriam 6", "moses 5"},
+        assert.are.same({"aaron 5", "amram 5", "jochebed 8", "miriam 6", "moses 5"},
           g.V().map(function(el)
             return el.value("name") .. " " .. tostring(#el.value("name"))
           end).sort()
@@ -83,9 +118,13 @@ describe("The gravity graph database", function()
       end) -- }}}
 
       it("deleteProperty", function() -- {{{
-        assert.are.same("miriam", g.filter("FEMALE").value("name"))
-        g.filter("FEMALE").deleteProperty("name")
-        assert.is_nil(g.filter("FEMALE").value("name"))
+        assert.are.same("miriam", g.has("a", 1).value("name"))
+        g.has("a", 1).deleteProperty("name")
+        assert.is_nil(g.has("a", 1).value("name"))
+      end) -- }}}
+
+      it("delete", function() -- {{{
+        pending("TODO")
       end) -- }}}
 
     end) -- }}}

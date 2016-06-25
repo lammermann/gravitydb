@@ -99,21 +99,23 @@ function p.links(inp, args, ...)
 end
 
 local function adjacend(direction)
+  local d1 = 1
+  local d2 = 2
+  if direction == ">" then
+    d1 = 2
+    d2 = 1
+  end
   return function(inp, args, ...)
     local ff  = get_filter_func(args.f)
-    local nds = {}
-    local lks = {}
     local el = inp.el
-    if inp.t == "n" then
-      for _,l in pairs(el._links()) do
-        lks[l.id()] = l
-      end
-    elseif inp.t == "l" then
-      lks[el.id()] = el
+    if inp.t == "l" and ff(el) then
+      return el.n(d1)
     end
-    for _,l in pairs(lks) do
-      local v = l.n(direction)
-      if ff(l) then
+
+    local nds = {}
+    for _,l in pairs(el._links()) do
+      local v = l.n(d1)
+      if ff(l) and el == l.n(d2) then
         local res = nextstep({el=v, t="n", c=inp.c}, ...)
         if res then table.insert(nds,res) end
       end
@@ -122,8 +124,8 @@ local function adjacend(direction)
   end
 end
 
-p.in_ = adjacend(1)
-p.out = adjacend(2)
+p.in_ = adjacend("<")
+p.out = adjacend(">")
 
 local function adjacendL(direction)
   return function(inp, args, ...)
