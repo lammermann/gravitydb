@@ -88,6 +88,33 @@ describe("The gravity graph database", function()
         )
       end) -- }}}
 
+
+      it("back", function() -- {{{
+        -- Who are the siblings of moses siblings that have a sister?
+        assert.are.same({"miriam", "moses"},
+          moses.out("sibling_of").as("s")
+            .out("sibling_of")
+            .filter("FEMALE").back("s")
+            .out("sibling_of")
+            .value("name")
+            .sort()
+        )
+      end) -- }}}
+
+    end) -- }}}
+
+    context("sideeffect steps:", function() -- {{{
+
+      it("as", function() -- {{{
+        assert.are.same({"aaron amram", "miriam amram", "moses amram"},
+          g.V("MALE").as("x")
+            .out("parent_of").map(function(el, c)
+              local x = c["x"].el
+              return el.value("name") .. " " .. x.value("name")
+            end).sort()
+        )
+      end) -- }}}
+
     end) -- }}}
 
     context("aggregate steps:", function() -- {{{

@@ -4,6 +4,19 @@
 
 -- {{{ helper functions
 
+-- duplicate a table
+local function duptable(t)
+  local out = {}
+  for k,v in pairs(t) do
+    if type(v) == "table" and getmetatable(t) == "duplicate" then
+      -- deep copy only tables that are marked
+      out[k] = duptable(v)
+    else
+      out[k] = v
+    end
+  end
+  return out
+end
 
 -- go recursivly to the next step
 local function nextstep(inp, idx, steps, caller)
@@ -147,20 +160,11 @@ p.inL  = adjacendL(2)
 p.outL = adjacendL(1)
 
 function p.back(inp, args, ...)
-  local nds = {}
-  local lks = {}
-  local objs = inp.c[args.k]
-  if objs then
-    for _,n in ipairs(inp.n) do
-      nd = objs[n.id()]
-      table.insert(nds, nd)
-    end
-    for _,l in ipairs(inp.l) do
-      lk = objs[l.id()]
-      table.insert(lks, lk)
-    end
+  if not args.k then return end
+  local obj = inp.c[args.k]
+  if obj then
+    return nextstep({ el=obj.el, t=obj.t, c=inp.c }, ...)
   end
-  return nextstep({ n=nds, l=lks, c=inp.c }, ...)
 end
 
 -- }}}
@@ -168,14 +172,8 @@ end
 -- {{{ sideeffect functions
 
 function p.as(inp, args, ...)
-  local objs = {}
-  for _,v in ipairs(inp.n) do
-    objs[v.id()] = v
-  end
-  for _,v in pairs(inp.l) do
-    objs[v.id()] = v
-  end
-  inp.c[args.k] = objs
+  if not args.k then return end
+  inp.c[args.k] = duptable(inp)
   return nextstep(inp, ...)
 end
 

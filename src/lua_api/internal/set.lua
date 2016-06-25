@@ -169,9 +169,13 @@ function s.new(nodes, links, parent)
   -- {{{ backtracking
 
   function set.as(name)
+    set._insertstep{run=pip.as, args={k=name}}
+    return set
   end
 
   function set.back(name)
+    set._insertstep{run=pip.back, args={k=name}}
+    return set
   end
 
   -- }}}
