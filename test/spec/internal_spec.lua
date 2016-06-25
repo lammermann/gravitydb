@@ -140,12 +140,6 @@ describe("gravity database core", function()
       n.delete()
       assert.has_error(function() n.id() end, "This is a deleted object. It can not be used any more")
       assert.has_error(function() return n.id end, "This is a deleted object. It can not be used any more")
-
-      -- also correct for independent nodes
-      local n3 = node.new(nil, "test")
-      n3.delete()
-      assert.has_error(function() n3.id() end, "This is a deleted object. It can not be used any more")
-      assert.has_error(function() return n3.id end, "This is a deleted object. It can not be used any more")
     end) -- }}}
 
     it("can add listeners", function() -- {{{

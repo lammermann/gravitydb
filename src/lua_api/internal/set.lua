@@ -251,8 +251,7 @@ function s.new(nodes, links, parent)
   set:addListener("NEWNODE", function(node, graph)
     local id = node.id()
     if nodes[id] and nodes[id] ~= node then
-      -- TODO error cause of id colision
-      return -1
+      error("id colision wrong object")
     end
     nodes[id] = node -- add node
   end)
@@ -270,8 +269,7 @@ function s.new(nodes, links, parent)
   set:addListener("NEWLINK", function(link, graph)
     local id = link.id()
     if links[id] and links[id] ~= link then
-      -- TODO error cause of id colision
-      return -1
+      error("id colision wrong object")
     end
     links[id] = link -- add link
   end)
@@ -279,8 +277,7 @@ function s.new(nodes, links, parent)
   set:addListener("DELLINK", function(link, graph)
     local id = link.id()
     if links[id] and links[id] ~= link then
-      -- TODO error cause of id colision
-      return -1
+      error("id colision wrong object")
     end
     -- tell the link to delete all his instances
     link:emit("DELTHIS", link)

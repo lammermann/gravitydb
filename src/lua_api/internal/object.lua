@@ -114,14 +114,11 @@ function o.new()
 
   -- {{{ internal cleanup functions
 
-  obj:addListener("DELTHIS", function(o)
-    if o ~= obj then
-      error("id colision wrong object")
+  obj:addListener("DELTHIS", function()
+    for k,_ in pairs(obj) do
+      obj[k] = nil
     end
-    for k,_ in pairs(o) do
-      o[k] = nil
-    end
-    setmetatable(o, {
+    setmetatable(obj, {
       __index     = deleted,
       __newindex  = deleted,
       __metatable = "not accesable",

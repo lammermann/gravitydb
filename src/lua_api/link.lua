@@ -14,6 +14,7 @@ function l.new(n1, n2, label, props, graph)
   local n2 = n2
   if type(label) ~= "string" then return end
   local label = label
+  if not graph then return end
   local g = graph
 
   local link = obj.new()
@@ -42,11 +43,7 @@ function l.new(n1, n2, label, props, graph)
   function link.delete()
     n1._deleteLink(link)
     n2._deleteLink(link)
-    if g then
-      g:emit("DELLINK", link)
-    else
-      link:emit("DELTHIS", link)
-    end
+    g:emit("DELLINK", link)
   end
 
   -- get or set a property
@@ -93,7 +90,7 @@ function l.new(n1, n2, label, props, graph)
   -- }}}
 
   setmetatable(link, link)
-  if g then g:emit("NEWLINK", link) end
+  g:emit("NEWLINK", link)
   return link
 end
 

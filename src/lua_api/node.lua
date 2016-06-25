@@ -26,9 +26,11 @@ function n.new(props, label, graph)
   local node = obj.new()
   local properties = props or {}
   local id    = tostring(node)
+  if type(label) ~= "string" then return end
   local label = label
-  local links = {}
+  if not graph then return end
   local g = graph
+  local links = {}
 
   -- get the node id
   function node.id()
@@ -46,11 +48,7 @@ function n.new(props, label, graph)
     for l,_ in pairs(links) do
       l.delete()
     end
-    if g then
-      g:emit("DELNODE", node)
-    else
-      node:emit("DELTHIS", node)
-    end
+    g:emit("DELNODE", node)
   end
 
   function node.addLink(n2, label, direction, props)
@@ -218,7 +216,7 @@ function n.new(props, label, graph)
   -- }}}
 
   setmetatable(node, node)
-  if g then g:emit("NEWNODE", node) end
+  g:emit("NEWNODE", node)
   return node
 end
 
