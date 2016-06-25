@@ -78,6 +78,24 @@ describe("The gravity graph database", function()
         )
       end) -- }}}
 
+      it("has", function() -- {{{
+        assert.are.same(3,
+          g.E("sibling_of").has("b").count()
+        )
+        assert.are.same(1,
+          g.E("sibling_of").has("b", 3).count()
+        )
+      end) -- }}}
+
+      it("hasNot", function() -- {{{
+        assert.are.same(1,
+          g.V("FEMALE").hasNot("a").count()
+        )
+        assert.are.same(5,
+          g.E("sibling_of").hasNot("b", 3).count()
+        )
+      end) -- }}}
+
       it("in", function() -- {{{
         assert.are.same({"amram", "amram", "jochebed", "jochebed"},
           g.V().has("name", "moses")
@@ -96,6 +114,13 @@ describe("The gravity graph database", function()
           g.V().has("name", "moses")
             .out("sibling_of")
             .out("sibling_of")
+            .value("name").sort()
+        )
+        -- can also be used from links
+        assert.are.same({"aaron", "miriam"},
+          g.V().has("name", "moses")
+            .outL("sibling_of")
+            .out()
             .value("name").sort()
         )
       end) -- }}}
