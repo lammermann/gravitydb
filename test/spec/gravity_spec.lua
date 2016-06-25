@@ -27,6 +27,40 @@ describe("The gravity graph database", function()
     end)
   end) -- }}}
 
+  context("traversal", function() -- {{{
+
+    -- prepare the moses graph {{{
+    before_each(function()
+      g = gravity.new()
+
+      moses = g.createNode({name = "moses"}, "MALE")
+      aaron = g.createNode({name = "aaron"}, "MALE")
+      miriam = g.createNode({name = "miriam"}, "FEMALE")
+
+      moses.addLink(aaron, "sibling_of", '-')
+      moses.addLink(miriam, "sibling_of", '-')
+      miriam.addLink(aaron, "sibling_of", '-')
+    end)
+
+    after_each(function()
+      g.delete()
+    end)
+    -- }}}
+
+    context("aggregate steps:", function() -- {{{
+
+      it("value", function() -- {{{
+        assert.are.same("miriam", g.V("FEMALE").value("name"))
+        -- is sortable
+        assert.are.same({"aaron", "moses"}, g.V("MALE").value("name").sort())
+        -- can be used to set values
+        g.V("MALE").value("test","x")
+        assert.are.same({"aaron", "moses"}, g.V().has("test","x").value("name").sort())
+      end) -- }}}
+    end) -- }}}
+
+  end) -- }}}
+
   describe("query language frontends", function() -- {{{
 
     -- prepare the moses graph {{{

@@ -42,10 +42,7 @@ end
 
 function p.value(inp, args)
   if not args.k then return end
-  local el = inp.el
-  if el.has(args.k) then
-    return el.value(args.k, args.v)
-  end
+  return inp.el.value(args.k, args.v)
 end
 
 function p.map(inp, args)
