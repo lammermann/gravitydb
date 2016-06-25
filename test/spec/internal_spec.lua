@@ -63,6 +63,10 @@ describe("gravity database core", function()
     end)
     -- }}}
 
+    it("should have an id", function() -- {{{
+      assert.is.truthy(l.id())
+    end) -- }}}
+
       it("always connect two nodes", function() -- {{{
         local l2  = n.addLink(nil, "label") -- try to create a dangling link
         assert.is_nil(l2)
@@ -112,6 +116,47 @@ describe("gravity database core", function()
     end) -- }}}
 
     end) -- }}}
+
+  context("objects", function() -- {{{
+
+    -- prepare environment {{{
+    before_each(function()
+      s = set.new()
+      n = node.new(nil, "test", s)
+      n2 = node.new(nil, "test", s)
+      l  = n.addLink(n2, "test_link", "-")
+    end)
+
+    after_each(function()
+      s, n, n2, l = nil
+    end)
+    -- }}}
+
+    it("can not be acsessed after deletion", function() -- {{{
+      l.delete()
+      assert.has_error(function() l.id() end, "This is a deleted object. It can not be used any more")
+      assert.has_error(function() return l.id end, "This is a deleted object. It can not be used any more") -- not even indexing is possible
+      n.delete()
+      assert.has_error(function() n.id() end, "This is a deleted object. It can not be used any more")
+      assert.has_error(function() return n.id end, "This is a deleted object. It can not be used any more")
+
+      -- also correct for independent nodes
+      local n3 = node.new(nil, "test")
+      n3.delete()
+      assert.has_error(function() n3.id() end, "This is a deleted object. It can not be used any more")
+      assert.has_error(function() return n3.id end, "This is a deleted object. It can not be used any more")
+    end) -- }}}
+
+    it("can add listeners", function() -- {{{
+      local var = {x=1}
+      n:emit("test", var)
+      assert.are.same(1, var.x)
+      n:addListener("test", function(v) v.x = v.x + 1 end)
+      n:emit("test", var)
+      assert.are.same(2, var.x)
+    end) -- }}}
+
+  end) -- }}}
 
 end)
 

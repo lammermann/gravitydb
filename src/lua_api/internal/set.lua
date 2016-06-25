@@ -256,8 +256,7 @@ function s.new(nodes, links, parent)
   set:addListener("DELNODE", function(node, graph)
     local id = node.id()
     if nodes[id] and nodes[id] ~= node then
-      -- TODO error cause of id colision
-      return -1
+      error("id colision wrong object")
     end
     -- tell the node to delete all his instances and links to other nodes
     node:emit("DELTHIS", node)

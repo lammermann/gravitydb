@@ -49,7 +49,7 @@ function n.new(props, label, graph)
     if g then
       g:emit("DELNODE", node)
     else
-      node:emit("DELNODE", node)
+      node:emit("DELTHIS", node)
     end
   end
 
