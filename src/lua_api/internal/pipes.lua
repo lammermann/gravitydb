@@ -98,77 +98,51 @@ function p.links(inp, args, ...)
   return p.filter(inp, args, ...)
 end
 
-function p.in_(inp, args, ...)
-  local ff  = get_filter_func(args.f)
-  local nds = {}
-  local lks = {}
-  local el = inp.el
-  if inp.t == "n" then
+local function adjacend(direction)
+  return function(inp, args, ...)
+    local ff  = get_filter_func(args.f)
+    local nds = {}
+    local lks = {}
+    local el = inp.el
+    if inp.t == "n" then
+      for _,l in pairs(el._links()) do
+        lks[l.id()] = l
+      end
+    elseif inp.t == "l" then
+      lks[el.id()] = el
+    end
+    for _,l in pairs(lks) do
+      local v = l.n(direction)
+      if ff(l) then
+        local res = nextstep({el=v, t="n", c=inp.c}, ...)
+        if res then table.insert(nds,res) end
+      end
+    end
+    return pushresult(nds)
+  end
+end
+
+p.in_ = adjacend(1)
+p.out = adjacend(2)
+
+local function adjacendL(direction)
+  return function(inp, args, ...)
+    if inp.t ~= "n" then return end
+    local ff  = get_filter_func(args.f)
+    local el = inp.el
+    local lks = {}
     for _,l in pairs(el._links()) do
-      lks[l.id()] = l
+      if ff(l) and l.n(direction) == el then
+        local res = nextstep({el=l, t="l", c=inp.c}, ...)
+        if res then table.insert(lks,res) end
+      end
     end
-  elseif inp.t == "l" then
-    lks[el.id()] = el
+    return pushresult(lks)
   end
-  for _,l in pairs(lks) do
-    local v = l.n(1)
-    if ff(l) then
-      local res = nextstep({el=v, t="n", c=inp.c}, ...)
-      if res then table.insert(nds,res) end
-    end
-  end
-  return pushresult(nds)
 end
 
-function p.out(inp, args, ...)
-  local ff  = get_filter_func(args.f)
-  local nds = {}
-  local lks = {}
-  local el = inp.el
-  if inp.t == "n" then
-    for _,l in pairs(el._links()) do
-      lks[l.id()] = l
-    end
-  elseif inp.t == "l" then
-    lks[el.id()] = el
-  end
-  for _,l in pairs(lks) do
-    local v = l.n(2)
-    if ff(l) then
-      local res = nextstep({el=v, t="n", c=inp.c}, ...)
-      if res then table.insert(nds,res) end
-    end
-  end
-  return pushresult(nds)
-end
-
-function p.inL(inp, args, ...)
-  if inp.t ~= "n" then return end
-  local ff  = get_filter_func(args.f)
-  local el = inp.el
-  local lks = {}
-  for _,l in pairs(el._links()) do
-    if ff(l) and l.n(2) == el then
-      local res = nextstep({el=l, t="l", c=inp.c}, ...)
-      if res then table.insert(lks,res) end
-    end
-  end
-  return pushresult(lks)
-end
-
-function p.outL(inp, args, ...)
-  if inp.t ~= "n" then return end
-  local ff  = get_filter_func(args.f)
-  local el = inp.el
-  local lks = {}
-  for _,l in pairs(el._links()) do
-    if ff(l) and l.n(1) == el then
-      local res = nextstep({el=l, t="l", c=inp.c}, ...)
-      if res then table.insert(lks,res) end
-    end
-  end
-  return pushresult(lks)
-end
+p.inL  = adjacendL(2)
+p.outL = adjacendL(1)
 
 function p.back(inp, args, ...)
   local nds = {}
