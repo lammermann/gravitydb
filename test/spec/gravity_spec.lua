@@ -66,6 +66,18 @@ describe("The gravity graph database", function()
         )
       end) -- }}}
 
+      it("nodes", function() -- {{{
+        assert.are.same({"jochebed", "miriam"},
+          g.V("FEMALE").value("name").sort()
+        )
+      end) -- }}}
+
+      it("links", function() -- {{{
+        assert.are.same(6,
+          g.E("parent_of").count()
+        )
+      end) -- }}}
+
       it("in", function() -- {{{
         assert.are.same({"amram", "amram", "jochebed", "jochebed"},
           g.V().has("name", "moses")
@@ -168,6 +180,18 @@ describe("The gravity graph database", function()
         )
       end) -- }}}
 
+      it("link", function() -- {{{
+        local gershom = g.createNode({name = "gershom"}, "MALE")
+        g.V().has("name","moses").in_("parent_of").link(gershom, "gparent_of", ">")
+        assert.are.same({"amram", "jochebed"},
+          gershom.in_("gparent_of").value("name").sort()
+        )
+      end) -- }}}
+
+      it("node", function() -- {{{
+        assert.is.equal(moses, g.V().has("name","moses").n())
+      end) -- }}}
+
       it("deleteProperty", function() -- {{{
         assert.are.same("miriam", g.has("a", 1).value("name"))
         g.has("a", 1).deleteProperty("name")
@@ -175,7 +199,8 @@ describe("The gravity graph database", function()
       end) -- }}}
 
       it("delete", function() -- {{{
-        pending("TODO")
+        g.V().has("name","moses").delete()
+        assert.are.same("aaron", g.V().has("name","miriam").out("sibling_of").value("name"))
       end) -- }}}
 
     end) -- }}}
