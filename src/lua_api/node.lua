@@ -68,10 +68,6 @@ function n.new(props, label, graph)
     return l
   end
 
-  function node.deleteLink(l)
-    l.delete()
-  end
-
   -- {{{ internal functions
   function node._addLink(l)
     links[l] = true

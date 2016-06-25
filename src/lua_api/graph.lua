@@ -17,11 +17,6 @@ function graph.new()
     return node.new(props, label, g)
   end
 
-  function g.deleteNode(node)
-    -- TODO delete all links to other nodes
-    g:emit("DELNODE", node)
-  end
-
   -- }}}
 
   -- {{{ import export functions
