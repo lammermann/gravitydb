@@ -9,9 +9,39 @@
 
 local o = {}
 
+-- {{{ helper functions
+
 local function deleted()
   error("This is a deleted object. It can not be used any more")
 end
+
+local function sortfunc(t)
+  return function(sorter)
+    if sorter == false then
+      table.sort(t, function(a,b) return a>b end)
+    elseif type(sorter) == "function" then
+      table.sort(t, sorter)
+    else
+      table.sort(t)
+    end
+    return t
+  end
+end
+
+local function flatten(t, out)
+  local out = out or {}
+  for _,v in ipairs(t) do
+    if type(v) == "table" and getmetatable(v) == "flatten" then
+      -- flatten only tables that arent classes
+      flatten(v, out)
+    else
+      table.insert(out, v)
+    end
+  end
+  return out
+end
+
+-- }}}
 
 function o.new(listeners)
   local obj = {}
@@ -22,15 +52,29 @@ function o.new(listeners)
     table.insert(steps, st)
   end
 
-  function obj:_runsteps()
+  function obj:_runsteps(reduce)
     -- should I do pipe optimation before?
-    local inout = self:_getinput()
+    local input = self:_getinput()
+    local result = {}
     if #steps > 0 then
       local st = steps[1]
-      inout = st.run(inout, st.args, 1, steps, self)
+      for _,v in ipairs(input.n) do
+        local r = st.run({el=v, t="n", c=input.c}, st.args, 1, steps, self)
+        if r then table.insert(result, r) end
+      end
+      for _,v in ipairs(input.l) do
+        local r = st.run({el=v, t="l", c=input.c}, st.args, 1, steps, self)
+        if r then table.insert(result, r) end
+      end
     end
     steps = {}
-    return inout
+    result = flatten(result)
+    if reduce then return reduce.run(result, reduce.args, self) end
+    if #result == 0 then return end
+    if #result == 1 then return result[1] end
+    local mt = { sort = sortfunc(result) }
+    setmetatable(result, { __index = mt })
+    return result
   end
 
   -- TODO there needs to be some parameter checking and error handling

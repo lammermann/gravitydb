@@ -13,7 +13,7 @@ local pip = require "internal.pipes"
 local s = {}
 
 function s.new(nodes, links, parent)
-  local set = obj.new()
+  local set   = obj.new()
   local nodes = nodes or {}
   local links = links or {}
   local g     = parent or set
@@ -117,8 +117,8 @@ function s.new(nodes, links, parent)
 
   -- get a node by his index
   function set.node(idx)
-    set._insertstep{run=pip.node, args={idx=idx}}
-    return set:_runsteps()
+    set._insertstep{run=function(...) return ... end}
+    return set:_runsteps{run=pip.node, args={idx=idx}}
   end
   set.n = set.node
 
@@ -132,8 +132,8 @@ function s.new(nodes, links, parent)
 
   -- count all objects which can be filtered optionally
   function set.count(filter)
-    set._insertstep{run=pip.count}
-    return set:_runsteps()
+    set._insertstep{run=function() return 1 end}
+    return set:_runsteps{run=pip.count}
   end
 
   function set.deleteProperty(name)
@@ -143,12 +143,8 @@ function s.new(nodes, links, parent)
 
   -- delete all objects in a set
   function set.delete()
-    for _,n in pairs(nodes) do
-      n.delete()
-    end
-    for _,l in pairs(links) do
-      l.delete()
-    end
+    set._insertstep{run=pip.delete}
+    return set:_runsteps()
   end
 
   -- functional programming map function

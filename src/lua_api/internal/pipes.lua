@@ -24,6 +24,12 @@ local function nextstep(inp, idx, steps, caller)
   end
 end
 
+local function isdeleted(obj)
+  return type(obj) == "table"
+    and tostring(obj) == "deleted object"
+    and getmetatable(obj) == "not accesable"
+end
+
 -- }}}
 
 local p = {}
@@ -31,74 +37,41 @@ local p = {}
 -- aggregate functions {{{
 
 function p.id(inp)
-  local result = {}
-  for _,n in ipairs(inp.n) do
-    table.insert(result, n.id())
-  end
-  for _,l in ipairs(inp.l) do
-    table.insert(result, l.id())
-  end
-  if #result == 0 then return end
-  if #result == 1 then return result[1] end
-  local mt = { sort = sortfunc(result) }
-  setmetatable(result, { __index = mt })
-  return result
+  return inp.el.id()
 end
 
 function p.count(inp)
-  return #inp.n + # inp.l
+  return #inp
 end
 
 function p.value(inp, args)
   if not args.k then return end
-  local result = {}
-  for _,n in ipairs(inp.n) do
-    if n.has(args.k) then
-      table.insert(result, n.value(args.k, args.v))
-    end
+  local el = inp.el
+  if el.has(args.k) then
+    return el.value(args.k, args.v)
   end
-  for _,l in ipairs(inp.l) do
-    if l.has(args.k) then
-      table.insert(result, l.value(args.k, args.v))
-    end
-  end
-  if #result == 0 then return end
-  if #result == 1 then return result[1] end
-  local mt = { sort = sortfunc(result) }
-  setmetatable(result, { __index = mt })
-  return result
 end
 
 function p.map(inp, args)
-  local result = {}
-  for i,n in ipairs(inp.n) do
-    table.insert(result, args.f(n, i))
-  end
-  for i,l in ipairs(inp.l) do
-    table.insert(result, args.f(l, i))
-  end
-  local mt = { sort = sortfunc(result) }
-  setmetatable(result, { __index = mt })
-  return result
+  return args.f(inp.el, inp.c)
 end
 
 function p.link(inp, args)
-  for _,n in ipairs(inp.n) do
-    n.addLink(args.n, args.l, args.d, args.p)
-  end
+  if not (args.n or args.l or args.d or inp.t == "n") then return end
+  local el = inp.el
+  el.addLink(args.n, args.l, args.d, args.p)
 end
 
 function p.node(inp, args)
   local idx = args.idx or 1
-  return inp.n[idx]
+  local out = inp[idx]
+  if not out or out.t ~= "n" then return end
+  return out.el
 end
 
 function p.delete(inp, args)
-  for _,n in ipairs(inp.n) do
-    n.delete()
-  end
-  for _,l in ipairs(inp.l) do
-    l.delete()
+  if not isdeleted(inp.el) then
+    inp.el.delete()
   end
 end
 
@@ -106,129 +79,112 @@ end
 
 -- filter functions {{{
 
-function p.filter(inp, args, idx, steps, ...)
-  local nds = {}
-  local lks = {}
+function p.filter(inp, args, ...)
   if args.f then
     local ff  = get_filter_func(args.f)
-    for _,v in ipairs(inp.n) do
-      if ff(v) then
-        table.insert(nds,v)
-      end
-    end
-    for _,v in ipairs(inp.l) do
-      if ff(v) then
-        table.insert(lks,v)
-      end
+    if ff(inp.el) then
+      return nextstep(inp, ...)
     end
   else
-    for _,v in ipairs(inp.n) do
-      table.insert(nds,v)
-    end
-    for _,v in pairs(inp.l) do
-      table.insert(lks,v)
-    end
+    return nextstep(inp, ...)
   end
-  return nextstep({ n=nds, l=lks, c=inp.c }, idx, steps, ...)
 end
 
-function p.nodes(inp, args, idx, steps, ...)
-  local nds = {}
-  if args.f then
-    local ff  = get_filter_func(args.f)
-    for _,v in ipairs(inp.n) do
-      if ff(v) then
-        table.insert(nds,v)
-      end
-    end
-  else
-    for _,v in ipairs(inp.n) do
-      table.insert(nds,v)
-    end
-  end
-  return nextstep({ n=nds, l={}, c=inp.c }, idx, steps, ...)
+function p.nodes(inp, args, ...)
+  if inp.t ~= "n" then return end
+  return p.filter(inp, args, ...)
 end
 
-function p.links(inp, args, idx, steps, ...)
-  local lks = {}
-  if args.f then
-    local ff  = get_filter_func(args.f)
-    for _,v in ipairs(inp.l) do
-      if ff(v) then
-        table.insert(lks,v)
-      end
-    end
-  else
-    for _,v in ipairs(inp.l) do
-      table.insert(lks,v)
-    end
-  end
-  return nextstep({ n={}, l=lks, c=inp.c }, idx, steps, ...)
+function p.links(inp, args, ...)
+  if inp.t ~= "l" then return end
+  return p.filter(inp, args, ...)
 end
 
-function p.in_(inp, args, idx, steps, ...)
+function p.in_(inp, args, ...)
   local ff  = get_filter_func(args.f)
   local nds = {}
   local lks = {}
-  for _,n in ipairs(inp.n) do
-    for _,l in pairs(n._links()) do
+  local el = inp.el
+  if inp.t == "n" then
+    for _,l in pairs(el._links()) do
       lks[l.id()] = l
     end
-  end
-  for _,l in pairs(inp.l) do
-    lks[l.id()] = l
+  elseif inp.t == "l" then
+    lks[el.id()] = el
   end
   for _,l in pairs(lks) do
-    local n = l.n(1)
+    local v = l.n(1)
     if ff(l) then
-      table.insert(nds,n)
+      local res = nextstep({el=v, t="n", c=inp.c}, ...)
+      if res then table.insert(nds,res) end
     end
   end
-  return nextstep({ n=nds, l={}, c=inp.c }, idx, steps, ...)
+  if #nds == 0 then return end
+  if #nds == 1 then return nds[1] end
+  setmetatable(nds, { __metatable = "flatten" })
+  return nds
 end
 
-function p.out(inp, args, idx, steps, ...)
+function p.out(inp, args, ...)
   local ff  = get_filter_func(args.f)
   local nds = {}
   local lks = {}
-  for _,n in ipairs(inp.n) do
-    for _,l in pairs(n._links()) do
+  local el = inp.el
+  if inp.t == "n" then
+    for _,l in pairs(el._links()) do
       lks[l.id()] = l
     end
-  end
-  for _,l in pairs(inp.l) do
-    lks[l.id()] = l
+  elseif inp.t == "l" then
+    lks[el.id()] = el
   end
   for _,l in pairs(lks) do
-    local n = l.n(2)
+    local v = l.n(2)
     if ff(l) then
-      table.insert(nds,n)
+      local res = nextstep({el=v, t="n", c=inp.c}, ...)
+      if res then table.insert(nds,res) end
     end
   end
-  return nextstep({ n=nds, l={}, c=inp.c }, idx, steps, ...)
+  if #nds == 0 then return end
+  if #nds == 1 then return nds[1] end
+  setmetatable(nds, { __metatable = "flatten" })
+  return nds
 end
 
-function p.inL(inp, args, idx, steps, caller)
-  local res = caller.subset()
-  for _,n in ipairs(inp.n) do
-    res = res + n.inL(args.f)
+function p.inL(inp, args, ...)
+  if inp.t ~= "n" then return end
+  local ff  = get_filter_func(args.f)
+  local el = inp.el
+  local lks = {}
+  for _,l in pairs(el._links()) do
+    if ff(l) and l.n(2) == el then
+      local res = nextstep({el=l, t="l", c=inp.c}, ...)
+      if res then table.insert(lks,res) end
+    end
   end
-  local out = res:_getinput()
-  out.c = inp.c
-  return nextstep(out, idx, steps, caller)
+  if #lks == 0 then return end
+  if #lks == 1 then return lks[1] end
+  setmetatable(lks, { __metatable = "flatten" })
+  return lks
 end
 
-function p.outL(inp, args, idx, steps, caller)
-  local res = caller.subset()
-  for _,n in ipairs(inp.n) do
-    res = res + n.outL(args.f)
+function p.outL(inp, args, ...)
+  if inp.t ~= "n" then return end
+  local ff  = get_filter_func(args.f)
+  local el = inp.el
+  local lks = {}
+  for _,l in pairs(el._links()) do
+    if ff(l) and l.n(1) == el then
+      local res = nextstep({el=l, t="l", c=inp.c}, ...)
+      if res then table.insert(lks,res) end
+    end
   end
-  local out = res:_getinput()
-  out.c = inp.c
-  return nextstep(out, idx, steps, caller)
+  if #lks == 0 then return end
+  if #lks == 1 then return lks[1] end
+  setmetatable(lks, { __metatable = "flatten" })
+  return lks
 end
 
-function p.back(inp, args, idx, steps, ...)
+function p.back(inp, args, ...)
   local nds = {}
   local lks = {}
   local objs = inp.c[args.k]
@@ -242,14 +198,14 @@ function p.back(inp, args, idx, steps, ...)
       table.insert(lks, lk)
     end
   end
-  return nextstep({ n=nds, l=lks, c=inp.c }, idx, steps, ...)
+  return nextstep({ n=nds, l=lks, c=inp.c }, ...)
 end
 
 -- }}}
 
 -- {{{ sideeffect functions
 
-function p.as(inp, args, idx, steps, ...)
+function p.as(inp, args, ...)
   local objs = {}
   for _,v in ipairs(inp.n) do
     objs[v.id()] = v
@@ -258,7 +214,7 @@ function p.as(inp, args, idx, steps, ...)
     objs[v.id()] = v
   end
   inp.c[args.k] = objs
-  return nextstep(inp, idx, steps, ...)
+  return nextstep(inp, ...)
 end
 
 -- }}}
