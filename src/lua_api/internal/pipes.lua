@@ -141,13 +141,15 @@ p.in_ = adjacend("<")
 p.out = adjacend(">")
 
 local function adjacendL(direction)
+  local d = 1
+  if direction == "<" then d = 2 end
   return function(inp, args, ...)
     if inp.t ~= "n" then return end
     local ff  = get_filter_func(args.f)
     local el = inp.el
     local lks = {}
     for _,l in pairs(el._links()) do
-      if ff(l) and l.n(direction) == el then
+      if ff(l) and l.n(d) == el then
         local res = nextstep({el=l, t="l", c=inp.c}, ...)
         if res then table.insert(lks,res) end
       end
@@ -156,8 +158,8 @@ local function adjacendL(direction)
   end
 end
 
-p.inL  = adjacendL(2)
-p.outL = adjacendL(1)
+p.inL  = adjacendL("<")
+p.outL = adjacendL(">")
 
 function p.back(inp, args, ...)
   if not args.k then return end

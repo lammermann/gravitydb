@@ -39,9 +39,9 @@ describe("The gravity graph database", function()
       amram = g.createNode({name = "amram"}, "MALE")
       jochebed = g.createNode({name = "jochebed"}, "FEMALE")
 
-      moses.addLink(aaron,  "sibling_of", '>')
-      moses.addLink(miriam, "sibling_of", '>')
-      miriam.addLink(aaron, "sibling_of", '>')
+      moses.addLink(aaron,  "sibling_of", '>', { b = 1 })
+      moses.addLink(miriam, "sibling_of", '>', { b = 2 })
+      miriam.addLink(aaron, "sibling_of", '>', { b = 3 })
       moses.addLink(aaron,  "sibling_of", '<')
       moses.addLink(miriam, "sibling_of", '<')
       miriam.addLink(aaron, "sibling_of", '<')
@@ -88,6 +88,30 @@ describe("The gravity graph database", function()
         )
       end) -- }}}
 
+      it("inL", function() -- {{{
+        assert.are.same(2, g.V().has("name", "aaron")
+          .inL("sibling_of")
+          .count()
+        )
+        assert.are.same({1,3}, g.V().has("name", "aaron")
+          .inL("sibling_of")
+          .value("b")
+          .sort()
+        )
+      end) -- }}}
+
+      it("outL", function() -- {{{
+        assert.are.same(0, g.V().has("name", "aaron")
+          .outL("sibling_of")
+          .has("b")
+          .count()
+        )
+        assert.are.same({1,2}, g.V().has("name", "moses")
+          .outL("sibling_of")
+          .value("b")
+          .sort()
+        )
+      end) -- }}}
 
       it("back", function() -- {{{
         -- Who are the siblings of moses siblings that have a sister?
