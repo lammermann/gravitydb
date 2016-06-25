@@ -43,7 +43,7 @@ end
 
 -- }}}
 
-function o.new(listeners)
+function o.new()
   local obj = {}
   local listeners = {}
   local steps = {}
@@ -84,7 +84,9 @@ function o.new(listeners)
     local container = listeners[name] or {}
     for i,l in ipairs(container) do
       -- don't allow a listener twice
-      if listener == l then return end
+      if listener == l then
+        return error("same listener isn't permitted twice")
+      end
     end
     container[#container + 1] = listener
     listeners[name] = container
@@ -114,8 +116,7 @@ function o.new(listeners)
 
   obj:addListener("DELTHIS", function(o)
     if o ~= obj then
-      -- TODO error cause of id colision
-      return -1
+      error("id colision wrong object")
     end
     for k,_ in pairs(o) do
       o[k] = nil

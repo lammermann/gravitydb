@@ -4,19 +4,8 @@
 
 -- {{{ helper functions
 
-local function sortfunc(t)
-  return function(sorter)
-    if sorter == false then
-      table.sort(t, function(a,b) return a>b end)
-    elseif type(sorter) == "function" then
-      table.sort(t, sorter)
-    else
-      table.sort(t)
-    end
-    return t
-  end
-end
 
+-- go recursivly to the next step
 local function nextstep(inp, idx, steps, caller)
   local st = steps[idx+1]
   if st then
@@ -28,6 +17,13 @@ local function isdeleted(obj)
   return type(obj) == "table"
     and tostring(obj) == "deleted object"
     and getmetatable(obj) == "not accesable"
+end
+
+local function pushresult(t)
+  if #t == 0 then return end
+  if #t == 1 then return t[1] end
+  setmetatable(t, { __metatable = "flatten" })
+  return t
 end
 
 -- }}}
@@ -119,10 +115,7 @@ function p.in_(inp, args, ...)
       if res then table.insert(nds,res) end
     end
   end
-  if #nds == 0 then return end
-  if #nds == 1 then return nds[1] end
-  setmetatable(nds, { __metatable = "flatten" })
-  return nds
+  return pushresult(nds)
 end
 
 function p.out(inp, args, ...)
@@ -144,10 +137,7 @@ function p.out(inp, args, ...)
       if res then table.insert(nds,res) end
     end
   end
-  if #nds == 0 then return end
-  if #nds == 1 then return nds[1] end
-  setmetatable(nds, { __metatable = "flatten" })
-  return nds
+  return pushresult(nds)
 end
 
 function p.inL(inp, args, ...)
@@ -161,10 +151,7 @@ function p.inL(inp, args, ...)
       if res then table.insert(lks,res) end
     end
   end
-  if #lks == 0 then return end
-  if #lks == 1 then return lks[1] end
-  setmetatable(lks, { __metatable = "flatten" })
-  return lks
+  return pushresult(lks)
 end
 
 function p.outL(inp, args, ...)
@@ -178,10 +165,7 @@ function p.outL(inp, args, ...)
       if res then table.insert(lks,res) end
     end
   end
-  if #lks == 0 then return end
-  if #lks == 1 then return lks[1] end
-  setmetatable(lks, { __metatable = "flatten" })
-  return lks
+  return pushresult(lks)
 end
 
 function p.back(inp, args, ...)
