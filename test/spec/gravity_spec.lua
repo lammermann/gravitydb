@@ -57,6 +57,13 @@ describe("The gravity graph database", function()
         g.V("MALE").value("test","x")
         assert.are.same({"aaron", "moses"}, g.V().has("test","x").value("name").sort())
       end) -- }}}
+
+      it("deleteProperty", function() -- {{{
+        assert.are.same("miriam", g.filter("FEMALE").value("name"))
+        g.filter("FEMALE").deleteProperty("name")
+        assert.is_nil(g.filter("FEMALE").value("name"))
+      end) -- }}}
+
     end) -- }}}
 
   end) -- }}}

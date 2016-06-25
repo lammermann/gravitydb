@@ -62,6 +62,11 @@ function p.node(inp, args)
   return out.el
 end
 
+function p.deleteP(inp, args)
+  if not args.k then return end
+  inp.el[args.k] = nil
+end
+
 function p.delete(inp, args)
   if not isdeleted(inp.el) then
     inp.el.delete()
