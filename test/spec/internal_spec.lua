@@ -39,12 +39,12 @@ describe("gravity database core", function()
     end) -- }}}
 
     it("can have properties", function() -- {{{
-      assert.is.equal(nil, n.value("key"))
+      assert.is_nil(n.value("key"))
       n.value("key", "val")
       assert.is.equal("val", n.value("key"))
       assert.is.equal("val", n["key"]) -- make sure alias also works
       n["key"] = nil
-      assert.is.equal(nil, n.value("key"))
+      assert.is_nil(n.value("key"))
     end) -- }}}
 
   end) -- }}}
@@ -109,12 +109,12 @@ describe("gravity database core", function()
       end) -- }}}
 
     it("can have properties", function() -- {{{
-      assert.is.equal(nil, l.value("key"))
+      assert.is_nil(l.value("key"))
       l.value("key", "val")
       assert.is.equal("val", l.value("key"))
       assert.is.equal("val", l["key"]) -- make sure alias also works
       l["key"] = nil
-      assert.is.equal(nil, l.value("key"))
+      assert.is_nil(l.value("key"))
     end) -- }}}
 
     end) -- }}}

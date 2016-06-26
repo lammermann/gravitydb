@@ -1,6 +1,5 @@
 -- {{{ includes
 local obj  = require "gravity.internal.element"
-local set  = require "gravity.internal.set"
 -- }}}
 
 local l = {}
@@ -15,21 +14,17 @@ function l.new(n1, n2, label, props, graph)
 
   local link = obj.new(label, props)
 
-  -- read out parameters {{{
-
-  function link.n(idx)
+  function link._n(idx) -- {{{
     if idx == 1 then return n1 end
     if idx == 2 then return n2 end
-  end
+  end -- }}}
 
-  -- }}}
-
-  -- delete the link with all pointers to it
-  function link.delete()
+  function link._delete() -- {{{
+    -- delete the link with all pointers to it
     n1._deleteLink(link)
     n2._deleteLink(link)
     g:emit("DELLINK", link)
-  end
+  end -- }}}
 
   -- {{{ internal functions
   function link:_getinput()
@@ -37,15 +32,13 @@ function l.new(n1, n2, label, props, graph)
   end
   -- }}}
 
-  -- helper metamethods {{{
-  function link.__tostring()
+  function link.__tostring() -- {{{
     local out = {
-      "link[",tostring(id),"][",tostring(n1.id()),
-      "-",label,"->",tostring(n2.id()),"]"
+      "link[",tostring(id),"][",tostring(n1._id()),
+      "-",label,"->",tostring(n2._id()),"]"
     }
     return table.concat(out)
-  end
-  -- }}}
+  end -- }}}
 
   g:emit("NEWLINK", link)
   return link

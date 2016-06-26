@@ -52,7 +52,7 @@ local p = {}
 -- aggregate functions {{{
 
 function p.id(inp)
-  return inp.el.id()
+  return inp.el._id()
 end
 
 function p.count(inp)
@@ -61,7 +61,7 @@ end
 
 function p.value(inp, args)
   if not args.k then return end
-  return inp.el.value(args.k, args.v)
+  return inp.el._value(args.k, args.v)
 end
 
 function p.map(inp, args)
@@ -88,7 +88,7 @@ end
 
 function p.delete(inp, args)
   if not isdeleted(inp.el) then
-    inp.el.delete()
+    inp.el._delete()
   end
 end
 
@@ -128,13 +128,13 @@ local function adjacend(direction)
     local ff  = get_filter_func(args.f)
     local el = inp.el
     if inp.t == "l" and ff(el) then
-      return nextstep({el=el.n(d1), t="n", c=inp.c}, ...)
+      return nextstep({el=el._n(d1), t="n", c=inp.c}, ...)
     end
 
     local nds = {}
     for _,l in pairs(el._links()) do
-      local v = l.n(d1)
-      if ff(l) and el == l.n(d2) then
+      local v = l._n(d1)
+      if ff(l) and el == l._n(d2) then
         local res = nextstep({el=v, t="n", c=inp.c}, ...)
         if res then table.insert(nds,res) end
       end
@@ -155,7 +155,7 @@ local function adjacendL(direction)
     local el = inp.el
     local lks = {}
     for _,l in pairs(el._links()) do
-      if ff(l) and l.n(d) == el then
+      if ff(l) and l._n(d) == el then
         local res = nextstep({el=l, t="l", c=inp.c}, ...)
         if res then table.insert(lks,res) end
       end

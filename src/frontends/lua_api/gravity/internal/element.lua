@@ -19,7 +19,7 @@ function e.new(label, props)
   local id  = tostring(elm)
 
   -- get the node id
-  function elm.id()
+  function elm._id()
     return id
   end
 
@@ -28,20 +28,20 @@ function e.new(label, props)
   end
 
   -- get or set a property
-  function elm.value(name, value)
+  function elm._value(name, value)
     if value then
       properties[name] = value
     end
     return properties[name]
   end
-  elm.__index = function(t,v) return t.value(v) end
+  elm.__index = function(t,v) return t._value(v) end
   elm.__newindex = function(t,k,v)
     properties[k] = v
     return v
   end
 
   -- does property exist
-  function elm.has(property, value)
+  function elm._has(property, value)
     local p = properties[property]
     if p ~= nil then
       if value ~= nil then

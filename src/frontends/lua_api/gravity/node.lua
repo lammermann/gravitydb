@@ -1,6 +1,5 @@
 -- {{{ includes
 local obj  = require "gravity.internal.element"
-local set  = require "gravity.internal.set"
 local link = require "gravity.link"
 local h    = require "gravity.internal.helpers"
 
@@ -28,17 +27,16 @@ function n.new(props, label, graph)
   local g = graph
   local links = {}
 
-  -- {{{ add and delete functions
 
-  -- delete the node with all its links and pointers to it
-  function node.delete()
+  function node._delete() -- {{{
+    -- delete the node with all its links and pointers to it
     for l,_ in pairs(links) do
-      l.delete()
+      l._delete()
     end
     g:emit("DELNODE", node)
-  end
+  end -- }}}
 
-  function node.addLink(n2, label, direction, props)
+  function node.addLink(n2, label, direction, props) -- {{{
     local direction = direction or "-"
     local l
     if direction == "<" then
@@ -58,7 +56,7 @@ function n.new(props, label, graph)
       n2._addLink(l)
     end
     return l
-  end
+  end -- }}}
 
   -- {{{ internal functions
   function node._addLink(l)
@@ -70,10 +68,6 @@ function n.new(props, label, graph)
   end
   -- }}}
 
-  -- }}}
-
-  -- {{{ filter functions
-
   -- {{{ filter relations
 
   -- return all conected nodes
@@ -82,10 +76,10 @@ function n.new(props, label, graph)
     local nds = {}
     for l,_ in pairs(links) do
       if ff(l) then
-        if l.n(1) == node then
-          table.insert(nds, l.n(2))
+        if l._n(1) == node then
+          table.insert(nds, l._n(2))
         else
-          table.insert(nds, l.n(1))
+          table.insert(nds, l._n(1))
         end
       end
     end
@@ -96,69 +90,13 @@ function n.new(props, label, graph)
   function node.bothL(filter)
   end
 
-  -- return outgoing nodes
-  function node.out(filter)
-    local ff  = get_filter_func(filter)
-    local nds = {}
-    for l,_ in pairs(links) do
-      if ff(l) then
-        if l.n(1) == node then
-          table.insert(nds, l.n(2))
-        end
-      end
-    end
-    return g.subset(nds)
-  end
-
-  -- return outgoing relations
-  function node.outL(filter)
-    local ff  = get_filter_func(filter)
-    local lks = {}
-    for l,_ in pairs(links) do
-      if ff(l) then
-        if l.n(1) == node then
-          table.insert(lks, l)
-        end
-      end
-    end
-    return g.subset(nil, lks)
-  end
-
-  -- return incoming nodes
-  function node.in_(filter)
-    local ff  = get_filter_func(filter)
-    local nds = {}
-    for l,_ in pairs(links) do
-      if ff(l) then
-        if l.n(2) == node then
-          table.insert(nds, l.n(1))
-        end
-      end
-    end
-    return g.subset(nds)
-  end
-
-  -- return incoming relations
-  function node.inL(filter)
-    local ff  = get_filter_func(filter)
-    local lks = {}
-    for l,_ in pairs(links) do
-      if ff(l) then
-        if l.n(2) == node then
-          lks[l.id()] = l
-        end
-      end
-    end
-    return g.subset(nil, lks)
-  end
-
   -- }}}
 
   -- {{{ internal functions
   function node._links()
     local lks = {}
     for l,_ in pairs(links) do
-      lks[l.id()] = l
+      lks[l._id()] = l
     end
     return lks
   end
@@ -166,8 +104,6 @@ function n.new(props, label, graph)
   function node:_getinput()
     return { n={node}, l={}, c={} }
   end
-  -- }}}
-
   -- }}}
 
   -- helper metamethods {{{

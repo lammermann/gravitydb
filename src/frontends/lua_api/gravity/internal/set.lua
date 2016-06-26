@@ -22,76 +22,7 @@ function s.new(nodes, links, parent)
     return s.new(nodes, links, g)
   end
 
-  -- {{{ filter functions
-
   function set.findByID(id)
-  end
-
-  -- returns all objects that pass function `filter`.
-  --
-  -- `filter` is a function that gets the arguments `object` and `index`:
-  --    filter(object, index)
-  function set.filter(filter)
-    set._insertstep{run=pip.filter, args={f=filter}}
-    return set
-  end
-
-  function set.nodes(filter)
-    set._insertstep{run=pip.nodes, args={f=filter}}
-    return set
-  end
-  set.vertices = set.nodes
-  set.V        = set.nodes
-
-  function set.links(filter)
-    set._insertstep{run=pip.links, args={f=filter}}
-    return set
-  end
-  set.connections = set.links
-  set.relations   = set.links
-  set.edges       = set.links
-  set.E           = set.links
-
-  -- get all incoming nodes matching the filter condition from all nodes and
-  -- links
-  function set.in_(filter)
-    set._insertstep{run=pip.in_, args={f=filter}}
-    return set
-  end
-
-  -- get all outgoing nodes matching the filter condition from all nodes and
-  -- links
-  function set.out(filter)
-    set._insertstep{run=pip.out, args={f=filter}}
-    return set
-  end
-
-  -- get all incoming links matiching the filter condition from all nodes
-  -- in the set
-  function set.inL(filter)
-    set._insertstep{run=pip.inL, args={f=filter}}
-    return set
-  end
-
-  -- get all outgoing links matiching the filter condition from all nodes
-  -- in the set
-  function set.outL(filter)
-    set._insertstep{run=pip.outL, args={f=filter}}
-    return set
-  end
-
-  function set.has(property, value)
-    return set.filter(function(obj)
-      if obj.has(property, value) then return true end
-      return false
-    end)
-  end
-
-  function set.hasNot(property, value)
-    return set.filter(function(obj)
-      if obj.has(property, value) then return false end
-      return true
-    end)
   end
 
   -- this will loop through a traversal until function `condition` returns
@@ -105,59 +36,10 @@ function s.new(nodes, links, parent)
   function set.loop(name, condition)
   end
 
-  -- }}}
-
   -- {{{ aggregate or modifcation functions
 
-  -- get the ids of all objects in a set.
-  function set.id()
-    set._insertstep{run=pip.id}
-    return set:_runsteps()
-  end
-
-  -- get a node by his index
-  function set.node(idx)
-    set._insertstep{run=function(...) return ... end}
-    return set:_runsteps{run=pip.node, args={idx=idx}}
-  end
-  set.n = set.node
-
-  -- get or set all values of a property in all objects in a set
-  function set.value(name, value)
-    set._insertstep{run=pip.value, args={k=name, v=value}}
-    return set:_runsteps()
-  end
   set.__index = function(t,v) return t.value(v) end
   set.__newindex = function(t,k,v) return t.value(k,v) end
-
-  -- count all objects which can be filtered optionally
-  function set.count(filter)
-    set._insertstep{run=function() return 1 end}
-    return set:_runsteps{run=pip.count}
-  end
-
-  function set.deleteProperty(name)
-    set._insertstep{run=pip.deleteP, args={k=name}}
-    return set:_runsteps()
-  end
-
-  -- delete all objects in a set
-  function set.delete()
-    set._insertstep{run=pip.delete}
-    return set:_runsteps()
-  end
-
-  -- functional programming map function
-  function set.map(mfunc)
-    set._insertstep{run=pip.map, args={f=mfunc}}
-    return set:_runsteps()
-  end
-
-  -- connect all nodes to a given node
-  function set.link(node, label, direction, props)
-    set._insertstep{run=pip.link, args={ n=node, l=label, d=direction, p=props }}
-    return set:_runsteps()
-  end
 
   -- sort all objects in a set
   -- if `rule` is a function it will be used as a sort function
@@ -165,20 +47,6 @@ function s.new(nodes, links, parent)
   -- otherwise it will be sorted ascending
   function set.sort(rule)
   end
-
-  -- {{{ backtracking
-
-  function set.as(name)
-    set._insertstep{run=pip.as, args={k=name}}
-    return set
-  end
-
-  function set.back(name)
-    set._insertstep{run=pip.back, args={k=name}}
-    return set
-  end
-
-  -- }}}
 
   -- {{{ except retain pattern
 
@@ -249,7 +117,7 @@ function s.new(nodes, links, parent)
   end
 
   set:addListener("NEWNODE", function(node, graph)
-    local id = node.id()
+    local id = node._id()
     if nodes[id] and nodes[id] ~= node then
       error("id colision wrong object")
     end
@@ -257,7 +125,7 @@ function s.new(nodes, links, parent)
   end)
 
   set:addListener("DELNODE", function(node, graph)
-    local id = node.id()
+    local id = node._id()
     if nodes[id] and nodes[id] ~= node then
       error("id colision wrong object")
     end
@@ -267,7 +135,7 @@ function s.new(nodes, links, parent)
   end)
 
   set:addListener("NEWLINK", function(link, graph)
-    local id = link.id()
+    local id = link._id()
     if links[id] and links[id] ~= link then
       error("id colision wrong object")
     end
@@ -275,7 +143,7 @@ function s.new(nodes, links, parent)
   end)
 
   set:addListener("DELLINK", function(link, graph)
-    local id = link.id()
+    local id = link._id()
     if links[id] and links[id] ~= link then
       error("id colision wrong object")
     end
