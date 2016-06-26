@@ -5,9 +5,9 @@ describe("The gravity graph database", function()
 
   -- prepare environment {{{
   setup(function()
-    package.path = "../src/?.lua;../src/lua_api/?.lua;"..package.path
-    --gravity = require "gravity"
-    gravity = require "graph"
+    local srcpath = "../src/frontends/lua_api/"
+    package.path = srcpath.."?.lua;"..srcpath.."?/init.lua;"..package.path
+    gravity = require "gravity"
   end)
 
   teardown(function()
@@ -31,7 +31,7 @@ describe("The gravity graph database", function()
 
     -- prepare the moses graph {{{
     before_each(function()
-      g = gravity.new()
+      g = gravity.graph()
 
       moses = g.createNode({name = "moses", priest = false}, "MALE")
       aaron = g.createNode({name = "aaron", priest = true}, "MALE")
@@ -211,6 +211,20 @@ describe("The gravity graph database", function()
             return el.value("name") .. " " .. tostring(#el.value("name"))
           end).sort()
         )
+        -- reverse output sorting
+        assert.are.same({"miriam 6", "jochebed 8", "amram 5", "aaron 5"},
+          g.V().has("name","moses").in_().map(function(el)
+            return el.value("name") .. " " .. tostring(#el.value("name"))
+          end).sort(false)
+        )
+        -- sort by function
+        assert.are.same({{"amram", 5}, {"moses", 5}, {"miriam", 6}, {"jochebed", 8}},
+          g.V().has("name","aaron").in_().map(function(el)
+            return {el.value("name"), #el.value("name")}
+          end).sort(function(a,b)
+            return a[2] == b[2] and a[1] < b[1] or a[2] < b[2]
+          end)
+        )
       end) -- }}}
 
       it("link", function() -- {{{
@@ -244,7 +258,7 @@ describe("The gravity graph database", function()
 
     -- prepare the moses graph {{{
     setup(function()
-      g = gravity.new()
+      g = gravity.graph()
 
       moses = g.createNode({name = "moses"}, "MALE")
       aaron = g.createNode({name = "aaron"}, "MALE")

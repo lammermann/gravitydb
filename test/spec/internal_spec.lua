@@ -5,11 +5,12 @@ describe("gravity database core", function()
 
   -- prepare environment {{{
   setup(function()
-    package.path = "../src/lua_api/?.lua;"..package.path
-    obj  = require "internal.object"
-    set  = require "internal.set"
-    link = require "link"
-    node = require "node"
+    local srcpath = "../src/frontends/lua_api/"
+    package.path = srcpath.."?.lua;"..srcpath.."?/init.lua;"..package.path
+    obj  = require "gravity.internal.object"
+    set  = require "gravity.internal.set"
+    link = require "gravity.link"
+    node = require "gravity.node"
   end)
 
   teardown(function()

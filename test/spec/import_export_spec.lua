@@ -5,8 +5,9 @@ describe("gravity database", function()
 
   -- prepare environment {{{
   setup(function()
-    package.path = "../src/?.lua;../src/lua_api/?.lua;"..package.path
-    gravity = require "graph"
+    local srcpath = "../src/frontends/lua_api/"
+    package.path = srcpath.."?.lua;"..srcpath.."?/init.lua;"..package.path
+    gravity = require "gravity"
   end)
 
   teardown(function()
@@ -18,7 +19,7 @@ describe("gravity database", function()
 
     -- prepare environment {{{
     before_each(function()
-      g = gravity.new()
+      g = gravity.graph()
     end)
 
     after_each(function()
@@ -27,7 +28,7 @@ describe("gravity database", function()
     -- }}}
 
     it("csv", function() -- {{{
-      local csv = require "import.csv"
+      local csv = require "gravity.import.csv"
       csv("data/moses_nodes.csv", function(data)
         g.createNode({name=data.name}, data.label)
       end)
