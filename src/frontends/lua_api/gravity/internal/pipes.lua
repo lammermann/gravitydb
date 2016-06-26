@@ -3,7 +3,7 @@
 --
 
 -- {{{ includes
-local h    = require "internal.helpers"
+local h    = require "gravity.internal.helpers"
 
 local get_filter_func = h.get_filter_func
 -- }}}

@@ -1,0 +1,9 @@
+return {
+  modules = {
+    ["gravity"] = "../src/frontends/lua_api/gravity/init.lua",
+    ["gravity.*"] = "../src/frontends/lua_api",
+    ["gravity.*.*"] = "../src/frontends/lua_api",
+  }
+}
+
+-- vim: ft=lua

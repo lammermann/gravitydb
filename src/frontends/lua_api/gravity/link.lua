@@ -1,6 +1,6 @@
 -- {{{ includes
-local obj  = require "internal.object"
-local set  = require "internal.set"
+local obj  = require "gravity.internal.object"
+local set  = require "gravity.internal.set"
 -- }}}
 
 local l = {}

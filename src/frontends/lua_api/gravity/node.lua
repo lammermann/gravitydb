@@ -1,8 +1,8 @@
 -- {{{ includes
-local obj  = require "internal.object"
-local set  = require "internal.set"
-local link = require "link"
-local h    = require "internal.helpers"
+local obj  = require "gravity.internal.object"
+local set  = require "gravity.internal.set"
+local link = require "gravity.link"
+local h    = require "gravity.internal.helpers"
 
 local get_filter_func = h.get_filter_func
 -- }}}

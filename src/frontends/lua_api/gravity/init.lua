@@ -1,14 +1,14 @@
 -- {{{ includes
-local set  = require "internal.set"
-local node = require "node"
+local set  = require "gravity.internal.set"
+local node = require "gravity.node"
 -- }}}
 
-local graph = {}
+local gravity = {}
 
-graph.version = "0.1"
-graph._VERSION = graph.version
+gravity.version = "0.1"
+gravity._VERSION = gravity.version
 
-function graph.new()
+function gravity.graph()
   local g = set.new()
 
   -- {{{ CRUD operations
@@ -33,6 +33,6 @@ function graph.new()
   return g
 end
 
-return graph
+return gravity
 
 -- vim: fdm=marker

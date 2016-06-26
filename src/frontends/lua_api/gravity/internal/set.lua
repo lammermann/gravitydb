@@ -6,8 +6,8 @@
 -- objects in such a set.
 
 -- {{{ includes
-local obj = require "internal.object"
-local pip = require "internal.pipes"
+local obj = require "gravity.internal.object"
+local pip = require "gravity.internal.pipes"
 -- }}}
 
 local s = {}
