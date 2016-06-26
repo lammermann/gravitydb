@@ -127,8 +127,10 @@ local function adjacend(direction)
   return function(inp, args, ...)
     local ff  = get_filter_func(args.f)
     local el = inp.el
-    if inp.t == "l" and ff(el) then
-      return nextstep({el=el._n(d1), t="n", c=inp.c}, ...)
+    if inp.t == "l" then
+      if ff(el) then
+        return nextstep({el=el._n(d1), t="n", c=inp.c}, ...)
+      end
     end
 
     local nds = {}
