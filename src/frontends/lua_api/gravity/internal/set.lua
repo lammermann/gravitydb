@@ -38,9 +38,6 @@ function s.new(nodes, links, parent)
 
   -- {{{ aggregate or modifcation functions
 
-  set.__index = function(t,v) return t.value(v) end
-  set.__newindex = function(t,k,v) return t.value(k,v) end
-
   -- sort all objects in a set
   -- if `rule` is a function it will be used as a sort function
   -- if `rule` is false it will be sorted decending

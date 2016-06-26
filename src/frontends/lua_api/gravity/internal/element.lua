@@ -34,11 +34,9 @@ function e.new(label, props)
     end
     return properties[name]
   end
-  elm.__index = function(t,v) return t._value(v) end
-  elm.__newindex = function(t,k,v)
-    properties[k] = v
-    return v
-  end
+
+  -- delete a value
+  elm._delvalue = function(k) properties[k] = nil end
 
   -- does property exist
   function elm._has(property, value)

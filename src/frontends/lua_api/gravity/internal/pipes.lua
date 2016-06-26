@@ -83,7 +83,7 @@ end
 
 function p.deleteP(inp, args)
   if not args.k then return end
-  inp.el[args.k] = nil
+  inp.el._delvalue(args.k)
 end
 
 function p.delete(inp, args)

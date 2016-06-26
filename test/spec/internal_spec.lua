@@ -53,8 +53,7 @@ describe("gravity database core", function()
       assert.is_nil(n.value("key"))
       n.value("key", "val")
       assert.is.equal("val", n.value("key"))
-      assert.is.equal("val", n["key"]) -- make sure alias also works
-      n["key"] = nil
+      n.deleteProperty("key")
       assert.is_nil(n.value("key"))
     end) -- }}}
 
@@ -123,8 +122,7 @@ describe("gravity database core", function()
       assert.is_nil(l.value("key"))
       l.value("key", "val")
       assert.is.equal("val", l.value("key"))
-      assert.is.equal("val", l["key"]) -- make sure alias also works
-      l["key"] = nil
+      l.deleteProperty("key")
       assert.is_nil(l.value("key"))
     end) -- }}}
 
