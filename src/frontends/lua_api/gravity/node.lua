@@ -1,5 +1,5 @@
 -- {{{ includes
-local obj  = require "gravity.internal.object"
+local obj  = require "gravity.internal.element"
 local set  = require "gravity.internal.set"
 local link = require "gravity.link"
 local h    = require "gravity.internal.helpers"
@@ -23,23 +23,10 @@ local n = {}
 -- :    The graph that holds the node. It is interesting for cleaning up all
 --      pointers to a node. (optional)
 function n.new(props, label, graph)
-  local node = obj.new()
-  local properties = props or {}
-  local id    = tostring(node)
-  if type(label) ~= "string" then return end
-  local label = label
+  local node = obj.new(label, props)
   if not graph then return end
   local g = graph
   local links = {}
-
-  -- get the node id
-  function node.id()
-    return id
-  end
-
-  function node.label()
-    return label
-  end
 
   -- {{{ add and delete functions
 
@@ -83,35 +70,9 @@ function n.new(props, label, graph)
   end
   -- }}}
 
-  -- get or set a property
-  function node.value(name, value)
-    if value then
-      properties[name] = value
-    end
-    return properties[name]
-  end
-  node.__index = function(t,v) return t.value(v) end
-  node.__newindex = function(t,k,v)
-    properties[k] = v
-    return v
-  end
-
   -- }}}
 
   -- {{{ filter functions
-
-  -- does property exist
-  function node.has(property, value)
-    local p = properties[property]
-    if p ~= nil then
-      if value ~= nil then
-        if p == value then return true end
-        return false
-      end
-      return true
-    end
-    return false
-  end
 
   -- {{{ filter relations
 
@@ -215,7 +176,6 @@ function n.new(props, label, graph)
   end
   -- }}}
 
-  setmetatable(node, node)
   g:emit("NEWNODE", node)
   return node
 end
