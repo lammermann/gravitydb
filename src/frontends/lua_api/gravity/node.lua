@@ -1,9 +1,6 @@
 -- {{{ includes
 local obj  = require "gravity.internal.element"
 local link = require "gravity.link"
-local h    = require "gravity.internal.helpers"
-
-local get_filter_func = h.get_filter_func
 -- }}}
 
 local n = {}
@@ -26,7 +23,6 @@ function n.new(props, label, graph)
   if not graph then return end
   local g = graph
   local links = {}
-
 
   function node._delete() -- {{{
     -- delete the node with all its links and pointers to it
@@ -66,33 +62,7 @@ function n.new(props, label, graph)
   function node._deleteLink(l)
     links[l] = nil
   end
-  -- }}}
 
-  -- {{{ filter relations
-
-  -- return all conected nodes
-  function node.both(filter)
-    local ff  = get_filter_func(filter)
-    local nds = {}
-    for l,_ in pairs(links) do
-      if ff(l) then
-        if l._n(1) == node then
-          table.insert(nds, l._n(2))
-        else
-          table.insert(nds, l._n(1))
-        end
-      end
-    end
-    return g.subset(nds)
-  end
-
-  -- return all conected relations
-  function node.bothL(filter)
-  end
-
-  -- }}}
-
-  -- {{{ internal functions
   function node._links()
     local lks = {}
     for l,_ in pairs(links) do
