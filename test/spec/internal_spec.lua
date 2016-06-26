@@ -34,6 +34,17 @@ describe("gravity database core", function()
     end)
     -- }}}
 
+    it("need correct paramenters at creation", function() -- {{{
+      -- no label
+      assert.has_error(function() node.new(nil, nil, s) end, "wrong init data")
+      -- wrong label type
+      assert.has_error(function() node.new(nil, true, s) end, "wrong init data")
+      -- wrong properties type
+      assert.has_error(function() node.new(1, "label", s) end, "wrong init data")
+      -- correct init
+      assert.are.same("table", type(node.new({}, "label", s)))
+    end) -- }}}
+
     it("should have an id", function() -- {{{
       assert.is.truthy(n.id())
     end) -- }}}
@@ -100,10 +111,10 @@ describe("gravity database core", function()
       end) -- }}}
 
       it("must have a label", function() -- {{{
-        local l2  = n.addLink(n2) -- no label
-        assert.is_nil(l2)
-        l2  = n.addLink(n2, {"label1","label2"}) -- only one label possible
-        assert.is_nil(l2)
+        -- no label
+        assert.has_error(function() n.addLink(n2) end, "wrong init data")
+        -- only one label possible
+        assert.has_error(function() n.addLink(n2, {"label1","label2"}) end, "wrong init data")
         l2  = n.addLink(n2, "mylabel")
         assert.is.same("mylabel", l2.label())
       end) -- }}}
