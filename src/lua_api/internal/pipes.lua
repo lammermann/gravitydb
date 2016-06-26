@@ -2,6 +2,12 @@
 -- traversal library with ideas from tinkerpop pipes
 --
 
+-- {{{ includes
+local h    = require "internal.helpers"
+
+local get_filter_func = h.get_filter_func
+-- }}}
+
 -- {{{ helper functions
 
 -- duplicate a table
