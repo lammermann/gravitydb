@@ -133,6 +133,26 @@ describe("The gravity graph database", function()
         )
       end) -- }}}
 
+      it("both", function() -- {{{
+        assert.are.same({"aaron", "aaron", "moses", "moses"}, g.V().has("name", "miriam")
+          .both("sibling_of")
+          .value("name").sort()
+        )
+        assert.are.same({"aaron", "aaron", "miriam", "miriam", "moses", "moses", "moses", "moses"},
+          g.V().has("name", "moses")
+            .out("sibling_of")
+            .both("sibling_of")
+            .value("name").sort()
+        )
+        -- can also be used from links
+        assert.are.same({"aaron", "miriam", "moses", "moses"},
+          g.V().has("name", "moses")
+            .outL("sibling_of")
+            .both()
+            .value("name").sort()
+        )
+      end) -- }}}
+
       it("inL", function() -- {{{
         assert.are.same(2, g.V().has("name", "aaron")
           .inL("sibling_of")
@@ -153,6 +173,19 @@ describe("The gravity graph database", function()
         )
         assert.are.same({1,2}, g.V().has("name", "moses")
           .outL("sibling_of")
+          .value("b")
+          .sort()
+        )
+      end) -- }}}
+
+      it("bothL", function() -- {{{
+        assert.are.same(2, g.V().has("name", "aaron")
+          .bothL("sibling_of")
+          .has("b")
+          .count()
+        )
+        assert.are.same({2,3}, g.V().has("name", "miriam")
+          .bothL("sibling_of")
           .value("b")
           .sort()
         )

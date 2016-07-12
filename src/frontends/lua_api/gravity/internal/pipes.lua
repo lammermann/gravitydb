@@ -148,6 +148,30 @@ end
 p.in_ = adjacend("<")
 p.out = adjacend(">")
 
+function p.both(inp, args, ...)
+  local ff  = get_filter_func(args.f)
+  local el = inp.el
+  local nds = {}
+  if inp.t == "l" then
+    if ff(el) then
+      table.insert(nds, nextstep({el=el._n(1), t="n", c=inp.c}, ...))
+      table.insert(nds, nextstep({el=el._n(2), t="n", c=inp.c}, ...))
+    end
+  else
+    for _,l in pairs(el._links()) do
+      local v = l._n(1)
+      if el ~= l._n(2) then
+        v = l._n(2)
+      end
+      if ff(l) then
+        local res = nextstep({el=v, t="n", c=inp.c}, ...)
+        if res then table.insert(nds,res) end
+      end
+    end
+  end
+  return pushresult(nds)
+end
+
 local function adjacendL(direction)
   local d = 1
   if direction == "<" then d = 2 end
@@ -168,6 +192,20 @@ end
 
 p.inL  = adjacendL("<")
 p.outL = adjacendL(">")
+
+function p.bothL(inp, args, ...)
+  if inp.t ~= "n" then return end
+  local ff  = get_filter_func(args.f)
+  local el = inp.el
+  local lks = {}
+  for _,l in pairs(el._links()) do
+    if ff(l) then
+      local res = nextstep({el=l, t="l", c=inp.c}, ...)
+      if res then table.insert(lks,res) end
+    end
+  end
+  return pushresult(lks)
+end
 
 function p.back(inp, args, ...)
   if not args.k then return end

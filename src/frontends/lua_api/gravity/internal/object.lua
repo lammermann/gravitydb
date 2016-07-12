@@ -159,6 +159,13 @@ function o.new()
     return obj
   end
 
+  -- get all incoming and outgoing nodes matching the filter condition from all
+  -- nodes and links
+  function obj.both(filter)
+    obj._insertstep{run=pip.both, args={f=filter}}
+    return obj
+  end
+
   -- get all incoming links matiching the filter condition from all nodes
   -- in the obj
   function obj.inL(filter)
@@ -170,6 +177,13 @@ function o.new()
   -- in the obj
   function obj.outL(filter)
     obj._insertstep{run=pip.outL, args={f=filter}}
+    return obj
+  end
+
+  -- get all incoming and outgoing links matiching the filter condition from
+  -- all nodes in the obj
+  function obj.bothL(filter)
+    obj._insertstep{run=pip.bothL, args={f=filter}}
     return obj
   end
 
