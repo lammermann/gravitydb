@@ -27,6 +27,15 @@ function e.new(label, props)
     return label
   end
 
+  -- get available property keys
+  function elm._propKeys()
+    local kys = {}
+    for k,_ in pairs(properties) do
+      table.insert(kys,k)
+    end
+    return kys
+  end
+
   -- get or set a property
   function elm._value(name, value)
     if value then

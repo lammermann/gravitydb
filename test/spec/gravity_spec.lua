@@ -238,6 +238,18 @@ describe("The gravity graph database", function()
         assert.are.same({"aaron", "amram", "moses"}, g.V().has("test","x").value("name").sort())
       end) -- }}}
 
+      it("valueMap", function() -- {{{
+        assert.are.same({name="miriam", a=1}, g.V().has("name","miriam").valueMap())
+        -- can be filtered
+        assert.are.same({
+            {name="aaron"},
+            {name="amram"},
+            {name="moses"}
+          },
+          g.V("MALE").valueMap("name").sort("name")
+        )
+      end) -- }}}
+
       it("map", function() -- {{{
         assert.are.same({"aaron 5", "amram 5", "jochebed 8", "miriam 6", "moses 5"},
           g.V().map(function(el)

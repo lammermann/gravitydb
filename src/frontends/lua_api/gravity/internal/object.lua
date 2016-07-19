@@ -25,6 +25,12 @@ local function sortfunc(t)
       table.sort(t, function(a,b) return a>b end)
     elseif type(sorter) == "function" then
       table.sort(t, sorter)
+    elseif type(sorter) == "string" then
+      table.sort(t, function(a,b)
+        local at = a[sorter] or ""
+        local bt = b[sorter] or ""
+        return at<bt
+      end)
     else
       table.sort(t)
     end
@@ -66,9 +72,15 @@ function o.new()
     return obj:_runsteps{run=pip.count}
   end
 
-  -- get or obj all values of a property in all objects in a obj
+  -- get or set all values of a property in all objects in a set
   function obj.value(name, value)
     obj._insertstep{run=pip.value, args={k=name, v=value}}
+    return obj:_runsteps()
+  end
+
+  -- get a map of all values in all objects in a set
+  function obj.valueMap(...)
+    obj._insertstep{run=pip.valueMap, args={...}}
     return obj:_runsteps()
   end
 

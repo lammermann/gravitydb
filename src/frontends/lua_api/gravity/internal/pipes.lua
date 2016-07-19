@@ -64,6 +64,18 @@ function p.value(inp, args)
   return inp.el._value(args.k, args.v)
 end
 
+function p.valueMap(inp, args)
+  local vls = {}
+  local args = args or {}
+  if #args == 0 then
+    args = inp.el._propKeys()
+  end
+  for _,arg in ipairs(args) do
+    vls[arg] = inp.el._value(arg)
+  end
+  return vls
+end
+
 function p.map(inp, args)
   return args.f(inp.el, inp.c)
 end
