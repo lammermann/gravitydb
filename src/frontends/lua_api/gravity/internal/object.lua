@@ -241,7 +241,17 @@ function o.new()
     if reduce then return reduce.run(result, reduce.args, self) end
     if #result == 0 then return end
     if #result == 1 then return result[1] end
-    local mt = { sort = sortfunc(result) }
+    local mt = {
+      sort = sortfunc(result),
+      min = function()
+        result.sort()
+        return result[1]
+      end,
+      max = function()
+        result.sort(false)
+        return result[1]
+      end,
+    }
     setmetatable(result, { __index = mt })
     return result
   end

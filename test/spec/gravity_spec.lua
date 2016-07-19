@@ -229,6 +229,18 @@ describe("The gravity graph database", function()
         assert.are.same(3, g.V("MALE").count())
       end) -- }}}
 
+      it("min", function() -- {{{
+        assert.are.same(1, g.E("sibling_of").value("b").min())
+        -- works also with string values
+        assert.are.same("aaron", g.V("MALE").value("name").min())
+      end) -- }}}
+
+      it("max", function() -- {{{
+        assert.are.same(3, g.E("sibling_of").value("b").max())
+        -- works also with string values
+        assert.are.same("moses", g.V("MALE").value("name").max())
+      end) -- }}}
+
       it("value", function() -- {{{
         assert.are.same("miriam", g.V().has("name","miriam").value("name"))
         -- is sortable
