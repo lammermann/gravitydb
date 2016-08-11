@@ -1,6 +1,8 @@
 The Gravity Database
 ====================
 
+[![Build Status](https://travis-ci.org/lammermann/gravitydb.svg?branch=master)](https://travis-ci.org/lammermann/gravitydb)
+
 Just as gravity connects the universe it now connects data behind the scenes too.
 
 Gravity is a graph database trying to make the traversal as easy as possible
