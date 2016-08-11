@@ -13,3 +13,10 @@ local P, R, S, V, C, Cg, Cb, Cmt, Cc, Ct, B, Cs =
   lpeg.Cmt, lpeg.Cc, lpeg.Ct, lpeg.B, lpeg.Cs
 
 local M = {}
+
+-- Takes a name stack and turns it into a class
+function M.cpp_class(name-stack, cur_template)
+  local cl = {}
+  
+  return cl
+end
