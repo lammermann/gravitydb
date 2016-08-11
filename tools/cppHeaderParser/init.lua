@@ -17,11 +17,23 @@ local M = {}
 -- Takes a name stack and turns it into a class
 function M.cpp_class(name-stack, cur_template)
   local cl = {}
-  
+
   return cl
 end
 
 -- Parsed C++ class header
 function M.cpp_header(header_file_name, arg_type, args)
   local arg_type = arg_type or "file"
+  local hd = {
+    classes = {},
+    functions = {}, -- functions that aren't part of a class
+    pragmas = {},
+    defines = {},
+    includes = {},
+    enums = {},
+    variable = {},
+    global_enums = {},
+  }
+
+  return hd
 end
