@@ -1,7 +1,7 @@
 The Gravity Database
 ====================
 
-Just as gravity connects the universe it now connects data invisibly.
+Just as gravity connects the universe it now connects data behind the scenes too.
 
 Gravity is a graph database trying to make the traversal as easy as possible
 for complex data. There are several goals it tries to archive:
@@ -12,9 +12,7 @@ for complex data. There are several goals it tries to archive:
 
 How to build
 ------------
-Gravity is meant as a library which can be embedded in a project. The easiest
-way to include it in a [JUCE](http://www.juce.com/) based project is to use the
-[JUCE module](/examples/juce-modules/gravity) in the examples folder.
+Gravity is meant as a library which can be embedded in a project.
 
 Nonetheless there is a standalone server in the [examples folder](/examples)
 (along with some other projects build on gravity) and here is how to build it:
@@ -53,6 +51,9 @@ You can help improving the project in different ways:
 * add to the documentation
 * test and file issues
 * submit patches
+
+WARNING: All branches prefixed with _dirty_ can and will be forced pushed and
+or deleted at any time.
 
 For some of these point you need to know the project and folder structure
 better.
