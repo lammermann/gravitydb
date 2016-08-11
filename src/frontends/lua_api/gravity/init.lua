@@ -17,19 +17,26 @@ function gravity.graph()
     return node.new(props, label, g)
   end
 
-  -- }}}
-
-  -- {{{ import export functions
-
-  function g.import(data, format)
-  end
-
-  function g.export(format)
-    return
+  -- overrides getinput and reads everything from backend
+  function g:_getinput()
+    local nds = g.backend.get_nodes()
+    local lks = g.backend.get_links()
+    return { n=nds, l=lks, c={} }
   end
 
   -- }}}
 
+  -- switch the backend
+  --
+  -- if not called the default backend is in memory only
+  function g.setBackend(name, ...)
+    if g.backend then
+      g.backend.unload(g)
+    end
+    g.backend = require("gravity.backends."..name).init(...)
+  end
+
+  g.setBackend("memory") -- default backend is memory only
   return g
 end
 

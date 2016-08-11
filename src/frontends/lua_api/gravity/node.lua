@@ -19,8 +19,8 @@ local n = {}
 -- :    The graph that holds the node. It is interesting for cleaning up all
 --      pointers to a node. (optional)
 function n.new(props, label, graph)
-  local node = obj.new(label, props)
   if not graph then return end
+  local node = obj.new(label, props, graph)
   local g = graph
   local links = {}
 
@@ -56,10 +56,12 @@ function n.new(props, label, graph)
 
   -- {{{ internal functions
   function node._addLink(l)
+    g:emit("UPDATENODE", node)
     links[l] = true
   end
 
   function node._deleteLink(l)
+    g:emit("UPDATENODE", node)
     links[l] = nil
   end
 
