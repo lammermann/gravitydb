@@ -20,3 +20,8 @@ function M.cpp_class(name-stack, cur_template)
   
   return cl
 end
+
+-- Parsed C++ class header
+function M.cpp_header(header_file_name, arg_type, args)
+  local arg_type = arg_type or "file"
+end
