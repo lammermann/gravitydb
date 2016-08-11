@@ -2,6 +2,7 @@ The Gravity Database
 ====================
 
 [![Build Status](https://travis-ci.org/lammermann/gravitydb.svg?branch=master)](https://travis-ci.org/lammermann/gravitydb)
+[![Coverage Status](https://coveralls.io/repos/github/lammermann/gravitydb/badge.svg?branch=master)](https://coveralls.io/github/lammermann/gravitydb?branch=master)
 
 Just as gravity connects the universe it now connects data behind the scenes too.
 
