@@ -38,8 +38,6 @@ TODO
 
 Getting started
 ---------------
-TODO
-
 You can get used to the concepts of graph data handling by following the
 [tutorial](/doc/tutorial.md) or by examining the exemplary use case
 [recepies](/doc/recepies).
@@ -55,8 +53,8 @@ You can help improving the project in different ways:
 * test and file issues
 * submit patches
 
-WARNING: All branches prefixed with _dirty_ can and will be forced pushed and
-or deleted at any time.
+**WARNING**: All branches prefixed with **dirty** can and will be forced pushed
+and/or deleted at any time.
 
 For some of these point you need to know the project and folder structure
 better.
