@@ -17,6 +17,7 @@ function s.new(nodes, links, parent)
   local nodes = nodes or {}
   local links = links or {}
   local g     = parent or set
+  if not parent then g.backend = require("gravity.backends.memory").init() end
 
   function set.subset(nodes, links)
     return s.new(nodes, links, g)
@@ -114,7 +115,7 @@ function s.new(nodes, links, parent)
   end
 
   set:addListener("NEWNODE", function(node, graph)
-    local id = node._id()
+    local id = g.backend.createNode(node)
     if nodes[id] and nodes[id] ~= node then
       error("id colision wrong object")
     end
@@ -123,6 +124,7 @@ function s.new(nodes, links, parent)
 
   set:addListener("DELNODE", function(node, graph)
     local id = node._id()
+    g.backend.deleteNode(id)
     if nodes[id] and nodes[id] ~= node then
       error("id colision wrong object")
     end
@@ -132,7 +134,7 @@ function s.new(nodes, links, parent)
   end)
 
   set:addListener("NEWLINK", function(link, graph)
-    local id = link._id()
+    local id = g.backend.createLink(link)
     if links[id] and links[id] ~= link then
       error("id colision wrong object")
     end
@@ -141,6 +143,7 @@ function s.new(nodes, links, parent)
 
   set:addListener("DELLINK", function(link, graph)
     local id = link._id()
+    g.backend.deleteLink(id)
     if links[id] and links[id] ~= link then
       error("id colision wrong object")
     end

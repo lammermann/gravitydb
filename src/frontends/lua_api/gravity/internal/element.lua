@@ -9,14 +9,15 @@ local set  = require "gravity.internal.set"
 
 local e = {}
 
-function e.new(label, props)
+function e.new(label, props, graph, id)
   local properties = props or {}
   if type(properties) ~= "table" then error("wrong init data") end
   if type(label) ~= "string" then error("wrong init data") end
   local label = label
+  local g = graph
 
   local elm = obj.new()
-  local id  = tostring(elm)
+  local id  = id or tostring(elm)
 
   -- get the node id
   function elm._id()
@@ -40,12 +41,16 @@ function e.new(label, props)
   function elm._value(name, value)
     if value then
       properties[name] = value
+      g:emit("UPDATEPROP", elm)
     end
     return properties[name]
   end
 
   -- delete a value
-  elm._delvalue = function(k) properties[k] = nil end
+  elm._delvalue = function(k)
+    g:emit("UPDATEPROP", elm)
+    properties[k] = nil
+  end
 
   -- does property exist
   function elm._has(property, value)

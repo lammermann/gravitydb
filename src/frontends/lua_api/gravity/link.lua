@@ -12,7 +12,7 @@ function l.new(n1, n2, label, props, graph)
   if not graph then return end
   local g = graph
 
-  local link = obj.new(label, props)
+  local link = obj.new(label, props, graph)
 
   function link._n(idx) -- {{{
     if idx == 1 then return n1 end
