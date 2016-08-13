@@ -54,17 +54,16 @@ newoption {
 --
 
 solution "GravityDB"
-  configurations { "Release", "Debug" }
+  configurations { "release", "debug" }
   location       ( _OPTIONS["to"] )
   flags          { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
+  targetdir   "bin/%{cfg.buildcfg}"
 
-  configuration "Debug"
-    targetdir   "bin/debug"
+  configuration "debug"
     defines     "_DEBUG"
     flags       { "Symbols" }
 
-  configuration "Release"
-    targetdir   "bin/release"
+  configuration "release"
     defines     "NDEBUG"
     flags       { "OptimizeSize" }
 
@@ -112,6 +111,7 @@ solution "GravityDB"
     targetprefix ""
     language    "C"
     kind        "SharedLib"
+    targetdir   "bin/%{cfg.buildcfg}/libs"
     includedirs { "src/dependencies/uuid" }
     links       { "lua" }
 
@@ -128,11 +128,13 @@ solution "GravityDB"
     targetprefix ""
     language    "C"
     kind        "SharedLib"
+    targetdir   "bin/%{cfg.buildcfg}/libs"
     includedirs { "src/dependencies/lpeg/" }
     links       { "lua" }
 
     files { "src/dependencies/lpeg/*.c" }
 
+  --[[
   project "libtomcrypt"
     targetname  "tomcrypt"
     language    "C"
@@ -154,6 +156,7 @@ solution "GravityDB"
     includedirs { "src/dependencies/libtommath/" }
 
     files { "src/dependencies/libtommath/*.c" }
+  --]]
 
   project "liblua"
     targetname  "lua"
