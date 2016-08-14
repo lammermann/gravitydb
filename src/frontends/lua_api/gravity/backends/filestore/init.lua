@@ -34,8 +34,8 @@ function filestore.init(params)
           error("file " .. value .. "is not a directory")
         end
       else
-        path, err = lfs.mkdir(value)
-        if not path then error(err) end
+        assert(lfs.mkdir(value))
+        path = value
       end
       return path
     end
