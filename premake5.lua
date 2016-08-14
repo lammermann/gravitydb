@@ -46,17 +46,10 @@ newoption {
 }
 
 newoption {
-  trigger = "lua-version",
-  value   = "version",
-  description = "Set the lua version to build the modules",
-  allowed = {
-    { "5.1", "5.1" },
-    { "5.2", "5.2" },
-    { "5.3", "5.3" },
-    { "jit", "jit-2.0" },
-  }
+  trigger = "lua-dir",
+  value   = "path",
+  description = "The location of the lua files to build the modules",
 }
-_OPTIONS["lua-version"] = _OPTIONS["lua-version"] or "5.1"
 
 -- }}}
 
@@ -134,8 +127,8 @@ solution "GravityDB"
       files { "src/dependencies/uuid/wuuid.c" }
 
     configuration "linux"
-      includedirs { "/usr/include/lua" .. _OPTIONS["lua-version"] }
-      libdirs { "/usr/lib/lua" .. _OPTIONS["lua-version"] }
+      includedirs { _OPTIONS["lua-dir"] }
+      libdirs { _OPTIONS["lua-dir"] }
       links { "uuid" }
 
   project "lpeg"
@@ -148,6 +141,10 @@ solution "GravityDB"
     links       { "lua" }
 
     files { "src/dependencies/lpeg/*.c" }
+
+    configuration "linux"
+      includedirs { _OPTIONS["lua-dir"] }
+      libdirs { _OPTIONS["lua-dir"] }
 
   --[[
   project "libtomcrypt"

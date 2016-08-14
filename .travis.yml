@@ -13,7 +13,7 @@ install:
 
 # Build and test.
 script:
-  - ./premake5 --to=build --lua-version=${LUASUFFIX} gmake
+  - ./premake5 --to=build --lua-dir=${TRAVIS_BUILD_DIR}/lua/src gmake
   - cd build
   - make
   - cd ../test
