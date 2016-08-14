@@ -24,11 +24,10 @@ install:
   - sudo luarocks install lpeg
   - sudo luarocks install busted
   - sudo luarocks install luacov-coveralls
-  - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-src.zip
-  - unzip premake-5.0.0-alpha9-src.zip
-  - cd premake-5.0.0-alpha9/build/gmake.unix
-  - make
-  - cd ../..
+  - git clone --depth=1 --branch=master https://github.com/premake/premake-core.git
+  - cd premake-core
+  - git submodule update --init --recursive
+  - make -f Bootstrap.mak $TRAVIS_OS_NAME
   - mv bin/release/premake5 ..
   - cd ..
 
