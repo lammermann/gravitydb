@@ -4,13 +4,15 @@ export PLATFORM=linux
 
 # Install lua version
 if [ "$LUASUFFIX" == "jit" ]; then
-  curl http://luajit.org/download/LuaJIT-2.0.2.tar.gz | tar xz
-  mv LuaJIT-2.0.2 lua
+  curl http://luajit.org/download/LuaJIT-2.0.4.tar.gz | tar xz
+  mv LuaJIT-2.0.4 lua
   cd lua
-  make && sudo make install
+  make amalg && sudo make install
   sudo ln -s /usr/local/bin/luajit /usr/local/bin/lua
-  sudo ln -s /usr/local/lib/libluajit.so /usr/local/lib/liblua.so
-  sudo ln -s /usr/local/include/luajit-2.0 /usr/local/include/lua
+  sudo ln -s /usr/local/lib/libluajit-5.1.so /usr/local/lib/liblua.so
+  #sudo cp src/libluajit.so /usr/local/lib/liblua.so
+  sudo cp src/libluajit.so /usr/lib/libluajit-5.1.so.2
+  sudo ln -s /usr/local/include/luajit-2.0 /usr/local/include/lua5.1
 else
   if [ "$LUASUFFIX" == "5.1" ]; then
     curl http://www.lua.org/ftp/lua-5.1.5.tar.gz | tar xz
