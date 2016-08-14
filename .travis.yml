@@ -34,7 +34,7 @@ install:
 
 # Build and test.
 script:
-  - ./premake5 --to=build gmake
+  - ./premake5 --to=build --lua-version=${LUASUFFIX} gmake
   - cd build
   - make
   - cd ../test

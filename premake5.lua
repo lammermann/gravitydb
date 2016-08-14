@@ -45,6 +45,19 @@ newoption {
   description = "Set the output location for the generated files"
 }
 
+newoption {
+  trigger = "lua-version",
+  value   = "version",
+  description = "Set the lua version to build the modules",
+  allowed = {
+    { "5.1", "5.1" },
+    { "5.2", "5.2" },
+    { "5.3", "5.3" },
+    { "jit", "jit-2.0" },
+  }
+}
+_OPTIONS["lua-version"] = _OPTIONS["lua-version"] or "5.1"
+
 -- }}}
 
 --
@@ -57,7 +70,7 @@ solution "GravityDB"
   configurations { "release", "debug" }
   location       ( _OPTIONS["to"] )
   flags          { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-  targetdir   "bin/%{cfg.buildcfg}"
+  targetdir      "bin/%{cfg.buildcfg}"
 
   configuration "debug"
     defines     "_DEBUG"
@@ -121,6 +134,8 @@ solution "GravityDB"
       files { "src/dependencies/uuid/wuuid.c" }
 
     configuration "linux"
+      includedirs { "/usr/include/lua" .. _OPTIONS["lua-version"] }
+      libdirs { "/usr/lib/lua" .. _OPTIONS["lua-version"] }
       links { "uuid" }
 
   project "lpeg"
