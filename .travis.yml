@@ -24,8 +24,13 @@ install:
   - sudo luarocks install lpeg
   - sudo luarocks install busted
   - sudo luarocks install luacov-coveralls
-  - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz
-  - tar -xvzf premake-5.0.0-alpha9-linux.tar.gz
+  - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-src.zip
+  - unzip premake-5.0.0-alpha9-src.zip
+  - cd premake-5.0.0-alpha9/build/gmake.unix
+  - make
+  - cd ../..
+  - mv bin/release/premake5 ..
+  - cd ..
 
 # Build and test.
 script:
