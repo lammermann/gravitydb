@@ -73,7 +73,6 @@ solution "GravityDB"
     defines     "NDEBUG"
     flags       { "OptimizeSize" }
 
-
   --project "GravityServer"
   --  targetname  "gravity"
   --  language    "C++"
@@ -139,6 +138,7 @@ solution "GravityDB"
     targetdir   "bin/%{cfg.buildcfg}/libs"
     includedirs { "src/dependencies/lpeg/" }
     links       { "lua" }
+    undefines   { "NDEBUG" }
 
     files { "src/dependencies/lpeg/*.c" }
 
