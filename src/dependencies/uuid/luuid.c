@@ -1,6 +1,6 @@
 /*
 * luuid.c
-* uuid interface for Lua 5.2
+* uuid interface for Lua 5.1 and 5.2
 * Luiz Henrique de Figueiredo <lhf@tecgraf.puc-rio.br>
 * 09 May 2012 22:22:00
 * This code is hereby placed in the public domain.
@@ -64,7 +64,11 @@ static const luaL_Reg R[] =
 
 LUALIB_API int luaopen_uuid(lua_State *L)
 {
+#if LUA_VERSION_NUM >= 502
  luaL_newlib(L,R);
+#else
+ luaL_register(L,MYNAME,R);
+#endif
  lua_pushliteral(L,"version");			/** version */
  lua_pushliteral(L,MYVERSION);
  lua_settable(L,-3);
