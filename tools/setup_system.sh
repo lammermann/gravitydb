@@ -18,6 +18,9 @@ else
   elif [ "$LUASUFFIX" == "5.2" ]; then
     curl http://www.lua.org/ftp/lua-5.2.3.tar.gz | tar xz
     mv lua-5.2.3 lua
+  elif [ "$LUASUFFIX" == "5.3" ]; then
+    curl http://www.lua.org/ftp/lua-5.3.3.tar.gz | tar xz
+    mv lua-5.3.3 lua
   fi
   cd lua
   make $PLATFORM
@@ -46,5 +49,5 @@ git clone --depth=1 --branch=master https://github.com/premake/premake-core.git
 cd premake-core
 git submodule update --init --recursive
 make -f Bootstrap.mak $TRAVIS_OS_NAME
-mv bin/release/premake5 ..
-cd ..
+mv bin/release/premake5 ${TRAVIS_BUILD_DIR}
+cd ${TRAVIS_BUILD_DIR}

@@ -3,6 +3,7 @@ language: c
 env:
   - LUASUFFIX=5.1 LUAVER=5.1
   - LUASUFFIX=5.2 LUAVER=5.2
+  - LUASUFFIX=5.3 LUAVER=5.3
   - LUASUFFIX=jit LUAVER=5.1
 
 # Tool setup.
@@ -17,7 +18,7 @@ script:
   - cd build
   - make
   - cd ../test
-  - busted --coverage
+  - busted --coverage spec/*
 
 after_success:
   - luacov-coveralls
