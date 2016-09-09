@@ -50,8 +50,10 @@ end
 --
 
 os.chdir("..")
-local text = os.outputof(string.format('git show %s:src/headers/gravity.h', branch))
-local _, _, version = text:find('VERSION%s*"([%w%p]+)"')
+--local text = os.outputof(string.format('git show %s:src/headers/gravity.h', branch))
+--local _, _, version = text:find('VERSION%s*"([%w%p]+)"')
+local text = os.outputof(string.format('git show %s:src/frontends/lua_api/gravity/init.lua', branch))
+local _, _, version = text:find('gravity.version%s*=%s*"([%w%p]+)"')
 
 local pkgName = "gravitydb-" .. version
 local pkgExt = ".zip"
@@ -103,6 +105,7 @@ end
 -- Generate lua bindings
 --
 
+--[[
 print("Generating lua bindings...")
 z = execQuiet("premake5 bindings")
 if z ~= 0 then
@@ -122,6 +125,7 @@ end
 if z ~= 0 then
   error("failed to update the embedded scripts", 0)
 end
+--]]
 
 --
 -- Clear out files I don't want included in any packages.

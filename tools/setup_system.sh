@@ -10,7 +10,6 @@ if [ "$LUASUFFIX" == "jit" ]; then
   make amalg && sudo make install
   sudo ln -s /usr/local/bin/luajit /usr/local/bin/lua
   sudo ln -s /usr/local/lib/libluajit-5.1.so /usr/local/lib/liblua.so
-  #sudo cp src/libluajit.so /usr/local/lib/liblua.so
   sudo cp src/libluajit.so /usr/lib/libluajit-5.1.so.2
   sudo ln -s /usr/local/include/luajit-2.0 /usr/local/include/lua5.1
 else
