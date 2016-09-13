@@ -9,9 +9,9 @@
 -- prepare environment {{{
 local lpeg = require "lpeg"
 
-local P, R, S, V, C, Cg, Cb, Cmt, Cc, Ct, B, Cs =
+local P, R, S, V, C, Cg, Cb, Cmt, Cc, Ct, B, Cs, Cp =
   lpeg.P, lpeg.R, lpeg.S, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb,
-  lpeg.Cmt, lpeg.Cc, lpeg.Ct, lpeg.B, lpeg.Cs
+  lpeg.Cmt, lpeg.Cc, lpeg.Ct, lpeg.B, lpeg.Cs, lpeg.Cp
 -- }}}
 
 local M = {}
@@ -140,7 +140,7 @@ local header = {
   entities         = optspace
                      * ( define
                        + include
-                       --+ namespace
+                       + namespace
                        + class
                        + union
                        + struct
@@ -148,18 +148,27 @@ local header = {
                        + method
                        + property
                        + spaces -- ignore spaces
-                       + C(any-eof) / print
+                       + C(any-eof) * Cp() / warning_print
                        )^0
                      * eof
 }
 -- }}}
 
+-- parsing processors {{{
 function M.define(d)
-  return d
+  local def = {
+    _type = "define",
+    content = d
+  }
+  return def
 end
 
 function M.include(d)
-  return d
+  local inc = {
+    _type = "include",
+    content = d
+  }
+  return inc
 end
 
 local allowed_access = {
@@ -228,7 +237,7 @@ function M.cpp_class(name, content, context)
                     + property
                     + access
                     + spaces
-                    + C(any-rbrace) / print
+                    + C(any-rbrace) * Cp() / warning_print
                     )^1
               )
             * rbrace
@@ -276,12 +285,12 @@ function M.cpp_method(d)
   return meth
 end
 
-local ns_stack = {}
 function M.cpp_namespace(ns)
-  local syntax = Ct(header)
+  local syntax = lbrace * Ct(header) --* rbrace
   local ast = assert(lpeg.match(syntax, ns.content))
+  ast._type = "namespace"
+  ast.name = ns.name
   return ast
-  --return ns
 end
 
 -- Parsed C++ class header
@@ -314,26 +323,56 @@ function M.cpp_header(header_file_name, arg_type, args)
   end
 
   local syntax = Ct(header)
-  local cur_line = 0
-  local cur_char = 0
-
   local ast = assert(lpeg.match(syntax, hd.content))
 
-  for _,e in ipairs(ast) do
-    if e._type == "class" then
-      hd.classes[e.name] = e
-      table.insert(hd.classes, e)
-    elseif e._type == "struct" then
-      hd.structs[e.name] = e
-      table.insert(hd.structs, e)
-    elseif e._type == "method" then
-      hd.functions[e.name] = e
-      table.insert(hd.functions, e)
+  local cur_line = 0
+  local cur_char = 0
+  local cur_ns
+  local function process(ast, ns, linenum, charnum)
+    for _,e in ipairs(ast) do
+      if e._type == "class" then
+        e.namespace = ns
+        hd.classes[e.name] = e
+        table.insert(hd.classes, e)
+      elseif e._type == "struct" then
+        hd.structs[e.name] = e
+        table.insert(hd.structs, e)
+      elseif e._type == "method" then
+        hd.functions[e.name] = e
+        table.insert(hd.functions, e)
+      elseif e._type == "include" then
+        table.insert(hd.includes, e.content)
+      elseif e._type == "define" then
+        table.insert(hd.defines, e.content)
+      elseif e._type == "namespace" then
+        local newns = tostring(e.name)
+        if ns then newns = ns .. "::" .. newns end
+        process(e, newns, linenum, charnum)
+      end
     end
+    return ast
   end
+  process(ast, cur_ns, cur_line, cur_char)
 
   return hd
 end
+-- }}}
+
+-- auxillary functions {{{
+
+function M.filter(container, filter, processor)
+  local filter = filter or function() return true end
+  local processor = processor or function(d) return d end
+  local out = {}
+  for k,v in pairs(container) do
+    if filter(v,k) then
+      table.insert(out, processor(v,k))
+    end
+  end
+  return out
+end
+
+-- }}}
 
 return M
 

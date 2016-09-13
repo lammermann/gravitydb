@@ -10,9 +10,14 @@ print("CppHeaderParser view of", header)
 sampleClass = header.classes["SampleClass"]
 print("Number of public methods", #sampleClass.methods.public)
 print("Number of private properties", #sampleClass.properties.private)
---meth3 = [m for m in sampleClass["methods"]["public"] if m["name"] == "meth3"][0] -- get meth3
---meth3ParamTypes = [t["type"] for t in meth3["parameters"]] -- get meth3s parameters
---print("Parameter Types for public method meth3", meth3ParamTypes)
+meth3 = cppparser.filter(sampleClass["methods"]["public"],
+          function(m) return m["name"] == "meth3" end
+        )[1] -- get meth3
+meth3ParamTypes = cppparser.filter(meth3["parameters"],
+                    function(d) return d end,
+                    function(t) return t["type"] end
+                  ) -- get meth3s parameters
+print("Parameter Types for public method meth3", meth3ParamTypes)
 
 print("\nReturn type for meth1:")
 print(header.classes.SampleClass.methods.public[2].rtn_type)
@@ -39,7 +44,7 @@ print("\nNamespace for AlphaClass is:")
 print(header.classes.AlphaClass.namespace)
 
 print("\nReturn type for alphaMethod is:")
-print(header.classes.AlphaClass.methods.public[1].rtn_type)
+print(header.classes.AlphaClass.methods.public[2].rtn_type)
 
 print("\nNamespace for OmegaClass is:")
 print(header.classes.OmegaClass.namespace)
