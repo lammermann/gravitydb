@@ -230,7 +230,7 @@ function M.cpp_class(name, content, context)
   local syntax = optspace * lbrace * optspace
             * Ct( access^-1
                   * ( class
-                    + Ct( Cg(Cc(""), "rtn_type") * Cg(P(name), "name") * optspace -- constructor
+                    + Ct( Cg(Cc("void"), "rtn_type") * Cg(P(name), "name") * optspace -- constructor
                       * C(balanced(lparent, rparent))
                       * optspace * semicolon ) / parse_with("cpp_method")
                     + method
