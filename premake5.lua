@@ -67,7 +67,7 @@ solution "GravityDB"
 
   configuration "debug"
     defines     "_DEBUG"
-    flags       { "Symbols" }
+    symbols     "On"
 
   configuration "release"
     defines     "NDEBUG"
@@ -89,6 +89,24 @@ solution "GravityDB"
   --  {
   --    "src/dependencies/**.c",
   --  }
+
+  project "sophia_backend"
+    targetname  "sophia"
+    targetprefix ""
+    language    "C"
+    kind        "SharedLib"
+    targetdir   "bin/%{cfg.buildcfg}/libs/gravity/backend"
+    includedirs {
+      "src/backends",
+      "src/dependencies/sophia"
+    }
+    links       { "lua", "sophia" }
+
+    files { "src/backends/sophia/backend.c" }
+
+    configuration "linux"
+      includedirs { _OPTIONS["lua-dir"] }
+      libdirs { _OPTIONS["lua-dir"] }
 
   -- tools {{{
 
@@ -145,6 +163,16 @@ solution "GravityDB"
     configuration "linux"
       includedirs { _OPTIONS["lua-dir"] }
       libdirs { _OPTIONS["lua-dir"] }
+
+  project "sophia"
+    targetname  "sophia"
+    language    "C"
+    kind        "StaticLib"
+    targetdir   "bin/%{cfg.buildcfg}/libs"
+    includedirs { "src/dependencies/sophia" }
+    flags       { "C99" }
+
+    files { "src/dependencies/sophia/sophia.c" }
 
   --[[
   project "libtomcrypt"
