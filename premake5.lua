@@ -90,6 +90,24 @@ solution "GravityDB"
   --    "src/dependencies/**.c",
   --  }
 
+  project "filestore_backend"
+    targetname  "filestore"
+    targetprefix ""
+    language    "C"
+    kind        "SharedLib"
+    targetdir   "bin/%{cfg.buildcfg}/libs/gravity/backend"
+    includedirs {
+      "src/backends",
+      "src/dependencies/mpack"
+    }
+    links       { "lua", "mpack" }
+
+    files { "src/backends/filestore/backend.c" }
+
+    configuration "linux"
+      includedirs { _OPTIONS["lua-dir"] }
+      libdirs { _OPTIONS["lua-dir"] }
+
   project "sophia_backend"
     targetname  "sophia"
     targetprefix ""
@@ -171,8 +189,20 @@ solution "GravityDB"
     targetdir   "bin/%{cfg.buildcfg}/libs"
     includedirs { "src/dependencies/sophia" }
     flags       { "C99" }
+    pic         "On"
 
     files { "src/dependencies/sophia/sophia.c" }
+
+  project "mpack"
+    targetname  "mpack"
+    language    "C"
+    kind        "StaticLib"
+    targetdir   "bin/%{cfg.buildcfg}/libs"
+    includedirs { "src/dependencies/mpack" }
+    flags       { "C99" }
+    pic         "On"
+
+    files { "src/dependencies/mpack/mpack.c" }
 
   --[[
   project "libtomcrypt"

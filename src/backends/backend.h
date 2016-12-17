@@ -15,9 +15,9 @@
 #define BACKEND_FEATURE_ACID 0x2
 #define BACKEND_FEATURE_SYNC 0x4
 
-typedef struct gravity_backend {
+typedef struct {
+  int  status;
   long txid;
-  void *backend;
 } gravity_backend_t;
 
 #endif /* BACKEND_H */
